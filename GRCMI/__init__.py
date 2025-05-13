@@ -1,4 +1,4 @@
 # Import Core Functionality
-from . import utils
+from .utils import Connect
 
-__all__ = ['utils']
+__all__ = ['Connect']

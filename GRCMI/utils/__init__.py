@@ -1,3 +1,3 @@
-from .connect import Connect
+from .Connect import Connect
 
 __all__ = ['Connect']

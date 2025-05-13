@@ -8,7 +8,9 @@ setup(
     author_email='brandon.l.hearley@nasa.gov',
     url='https://github.com/bhearley/GRC_GrantaMI',
     packages=find_packages(),         # Automatically finds all packages (folders with __init__.py)
-    install_requires=[],              # List any runtime dependencies here (e.g., ['requests'])
+    install_requires=[
+         'requests'
+    ],              
     classifiers=[
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',

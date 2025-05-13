@@ -7,7 +7,7 @@ setup(
     author='Brandon Hearley',
     author_email='brandon.l.hearley@nasa.gov',
     url='https://github.com/bhearley/GRC_GrantaMI',
-    packages=find_packages(),         # Automatically finds all packages (folders with __init__.py)
+    packages=find_packages(),         
     install_requires=[
          'requests'
     ],              
@@ -15,5 +15,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
-    python_requires='>=3.7',          # Adjust for your Python version compatibility
+    python_requires='>=3.7',          
 )

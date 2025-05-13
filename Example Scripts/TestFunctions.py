@@ -1,11 +1,11 @@
-# Import Modules
-from GRCMI import Connect, UnitConversion
-
 
 # ----------------------------------------------------------------------------
 # Test Connect.py
 
 try:
+    # Import Function
+    from GRCMI import Connect
+
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     db_key = "NasaGRC_MD_45_09-2-05"
@@ -21,6 +21,9 @@ except:
 # Test UnitConversion.py
 
 try:
+    # Import Function
+    from GRCMI import UnitConversion
+
     # Perform Unit Conversion
     source_unit = 'Pa'
     source_value = 1e6

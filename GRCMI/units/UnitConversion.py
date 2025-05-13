@@ -19,6 +19,7 @@ def UnitConversion(source_unit, source_value, target_unit):
     # Load the units library
     url = 'https://raw.githubusercontent.com/bhearley/GRC_GrantaMI/refs/heads/main/GRCMI/units/unit_library.json'
     response = requests.get(url)
+    print(response.status_code)
 
     # Check for valid file
     if response.status_code == 200:

@@ -14,6 +14,7 @@ def UnitConversion(source_unit, source_value, target_unit):
     #---------------------------------------------------------------------------
 
     # Import Modules
+    import numpy as np
     import requests
 
     # Load the units library
@@ -36,9 +37,20 @@ def UnitConversion(source_unit, source_value, target_unit):
     # Convert to Global Unit
     data = U[source_unit]
     val = eval(data[0].replace('x', str(source_value)))
-    
+    if isinstance(val,list):
+        vals = '['
+        for v in val:
+            vals = vals + str(v) + ','
+        vals = vals + ']'
+
     # Convert to Target Unit
     data = U[target_unit]
-    target_value = eval(data[1].replace('x', str(val)))
+    if isinstance(val,list):
+        str_val = data[1].replace('x', str(val))
+        str_val = str_val.replace('[','np.array([')
+        str_val = str_val.replace(']','])')
+        target_value = eval(str_val)
+    else:
+        target_value = eval(data[1].replace('x', str(val)))
 
     return target_value

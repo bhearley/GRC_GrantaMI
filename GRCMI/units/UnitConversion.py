@@ -35,21 +35,39 @@ def UnitConversion(source_unit, source_value, target_unit):
         
     # Convert to Global Unit
     data = U[source_unit]
-    val = eval(data[0].replace('x', str(source_value)))
-    if isinstance(val,list):
-        vals = '['
-        for v in val:
-            vals = vals + str(v) + ','
-        vals = vals + ']'
+    if isinstance(source_value, float):
+        val = eval(data[0].replace('x', str(source_value)))
+
+    elif isinstance(source_value, int):
+        val = eval(data[0].replace('x', str(source_value)))
+
+    elif isinstance(source_value, np.ndarray):
+        str_val = data[0].replace('x', str(source_value))
+        str_val = str_val.replace('[','np.array([')
+        str_val = str_val.replace(']','])')
+        str_val = str_val.replace(' ',', ')
+        val = eval(str_val)
+
+    else:
+        raise TypeError("Source value must be float, integer, or np.ndarray")
+    
 
     # Convert to Target Unit
     data = U[target_unit]
-    if isinstance(val,list):
+    if isinstance(source_value, float):
+        target_value = eval(data[1].replace('x', str(val)))
+
+    elif isinstance(source_value, int):
+        target_value = eval(data[1].replace('x', str(val)))
+
+    elif isinstance(val,np.ndarray):
         str_val = data[1].replace('x', str(val))
         str_val = str_val.replace('[','np.array([')
         str_val = str_val.replace(']','])')
+        str_val = str_val.replace(' ',', ')
         target_value = eval(str_val)
+
     else:
-        target_value = eval(data[1].replace('x', str(val)))
+        raise TypeError("Target value must be float, integer, or np.ndarray")
 
     return target_value

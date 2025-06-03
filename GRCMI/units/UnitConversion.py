@@ -13,6 +13,20 @@ def UnitConversion(source_unit, source_value, target_unit):
     #    target_value   the value after conversion
     #---------------------------------------------------------------------------
 
+    #---------------------------------------------------------------------------
+    # UnitConversion.py
+    #
+    # PURPOSE: Perform Unit Conversion
+    #
+    # INPUTS:
+    #    source_unit    the units to convert from
+    #    source_value   the value for conversion
+    #    target_unit    the units to convert to
+    #
+    # OUTPUTS:
+    #    target_value   the value after conversion
+    #---------------------------------------------------------------------------
+
     # Import Modules
     import numpy as np
     import re
@@ -43,7 +57,7 @@ def UnitConversion(source_unit, source_value, target_unit):
         val = eval(data[0].replace('x', str(source_value)))
 
     elif isinstance(source_value, np.ndarray):
-        str_val = data[0].replace('x', str(source_value))
+        str_val = data[0].replace('x', np.array2string(source_value, threshold=np.inf))
         str_val = str_val.replace('[','np.array([')
         str_val = str_val.replace(']','])')
         str_val = re.sub(r'\s+', ', ', str_val)
@@ -62,7 +76,7 @@ def UnitConversion(source_unit, source_value, target_unit):
         target_value = eval(data[1].replace('x', str(val)))
 
     elif isinstance(val,np.ndarray):
-        str_val = data[1].replace('x', str(val))
+        str_val = data[1].replace('x', np.array2string(source_value, threshold=np.inf))
         str_val = str_val.replace('[','np.array([')
         str_val = str_val.replace(']','])')
         str_val = re.sub(r'\s+', ', ', str_val)

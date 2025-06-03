@@ -15,6 +15,7 @@ def UnitConversion(source_unit, source_value, target_unit):
 
     # Import Modules
     import numpy as np
+    import re
     import requests
 
     # Load the units library
@@ -45,7 +46,7 @@ def UnitConversion(source_unit, source_value, target_unit):
         str_val = data[0].replace('x', str(source_value))
         str_val = str_val.replace('[','np.array([')
         str_val = str_val.replace(']','])')
-        str_val = str_val.replace(' ',', ')
+        str_val = re.sub(r'\s+', ', ', str_val)
         val = eval(str_val)
 
     else:
@@ -64,7 +65,7 @@ def UnitConversion(source_unit, source_value, target_unit):
         str_val = data[1].replace('x', str(val))
         str_val = str_val.replace('[','np.array([')
         str_val = str_val.replace(']','])')
-        str_val = str_val.replace(' ',', ')
+        str_val = re.sub(r'\s+', ', ', str_val)
         target_value = eval(str_val)
 
     else:

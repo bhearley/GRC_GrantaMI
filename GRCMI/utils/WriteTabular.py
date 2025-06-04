@@ -34,11 +34,10 @@ def WriteTabular(mi, record, RecData, TB, status):
                     while tab.shape[1] > 0:
                         tab.delete_row(0)
 
-            # Add new data
-            for i in range(len(RecData[att]['Values'])):
-                # Check if row exists
-                flag = 0
-                if RecData[att]['Conflict'] == 'Append':
+                # Add new data
+                for i in range(len(RecData[att]['Values'])):
+                    # Check if row exists
+                    flag = 0
                     row = RecData[att]['Values'][i]
                     for kk in range(tab.shape[1]):
                         row_chk = []
@@ -50,14 +49,14 @@ def WriteTabular(mi, record, RecData, TB, status):
                         if sum(row_chk) == 0:
                             flag = 1
 
-                # Write new row of data
-                if flag == 0:
-                    tab.add_row()
-                    for j in range(len(RecData[att]['Values'][i])):
-                        col_idx = tab.columns.index(RecData[att]['Columns'][j])                 
-                        tab.value[i][col_idx] = RecData[att]['Values'][i][j]
-                        if RecData[att]['Units'][j] != None:
-                            tab.units.data[i][col_idx] = RecData[att]['Units'][j]
+                    # Write new row of data
+                    if flag == 0:
+                        tab.add_row()
+                        for j in range(len(RecData[att]['Values'][i])):
+                            col_idx = tab.columns.index(RecData[att]['Columns'][j])                 
+                            tab.value[i][col_idx] = RecData[att]['Values'][i][j]
+                            if RecData[att]['Units'][j] != None:
+                                tab.units.data[i][col_idx] = RecData[att]['Units'][j]
 
             # Add attribute to list of attributes to update
             AttList.append(tab)

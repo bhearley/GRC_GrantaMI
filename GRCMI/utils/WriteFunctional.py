@@ -1,4 +1,4 @@
-def WriteFunctional(mi, db, table, record, RecData, FN):
+def WriteFunctional(mi, record, RecData, FN, status):
     #   PURPOSE: Write functional attribute data to a record
     #
     #   INPUTS:
@@ -8,6 +8,7 @@ def WriteFunctional(mi, db, table, record, RecData, FN):
     #       record  Granta MI record to write data to
     #       RecData Python Dictionary containing record data to write
     #       FN      List of Functional Attributes
+    #       status  conflict statis
     #   OUTPUTS  
     #       record  Record with populated data
 
@@ -19,11 +20,17 @@ def WriteFunctional(mi, db, table, record, RecData, FN):
 
         # Check if both X and Y data exists
         try:
-            if RecData[att]['X Values'] != None and RecData[att]['Y Values'] != None:         
+            if RecData[att]['X Values'] != None and RecData[att]['Y Values'] != None:  
+
+                # Skip if conflict status is Do Not Repalce
+                if status == 'Do Not Repalce':
+                    continue
+
+                # Get functional data       
                 func = record.attributes[att]
 
-                # Clear any previous data
-                if RecData[att]['Conflict'] == 'Replace':
+                # Clear any previous data if status is Replace
+                if status == 'Replace':
                     func.clear()
 
                 # Add Data Points

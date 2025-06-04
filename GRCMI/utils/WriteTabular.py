@@ -1,4 +1,4 @@
-def WriteTabular(mi, db, table, record, RecData, TB):
+def WriteTabular(mi, record, RecData, TB, status):
     #   PURPOSE: Write tabualr attribute data to a record
     #
     #   INPUTS:
@@ -8,6 +8,7 @@ def WriteTabular(mi, db, table, record, RecData, TB):
     #       record  Granta MI record to write data to
     #       RecData Python Dictionary containing record data to write
     #       TB      List of Functional Attributes
+    #       status  conflict stats
     #   OUTPUTS  
     #       record  Record with populated data
 
@@ -20,10 +21,16 @@ def WriteTabular(mi, db, table, record, RecData, TB):
         try:
             # Check if tablular attribute has data
             if len(RecData[att]['Values']) > 0:
+
+                # Skip if status is do not replace
+                if status == 'Do Not Replace':
+                    continue
+
+                # Get the tabular data
                 tab = record.attributes[att]
 
-                # Remove all previous data
-                if RecData[att]['Conflict'] == 'Replace':
+                # Remove all previous data if status is replace
+                if status == 'Replace':
                     while tab.shape[1] > 0:
                         tab.delete_row(0)
 

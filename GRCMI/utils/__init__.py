@@ -4,5 +4,6 @@ from .GetRecord import GetRecord
 from .WriteFunctional import WriteFunctional
 from .WriteSingleValue import WriteSingleValue
 from .WriteTabular import WriteTabular
+from .WriteStaticLinks import WriteStaticLinks
 
-__all__ = ['Connect', 'GetParent', 'GetRecord', 'WriteFunctional', 'WriteSingleValue', 'WriteTabular']
+__all__ = ['Connect', 'GetParent', 'GetRecord', 'WriteFunctional', 'WriteSingleValue', 'WriteTabular', 'WriteStaticLinks']

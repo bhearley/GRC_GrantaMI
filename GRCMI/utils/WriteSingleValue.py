@@ -1,4 +1,4 @@
-def WriteSingleValue(mi, db, table, record, RecData, SV):
+def WriteSingleValue(mi, record, RecData, SV, status):
     #   PURPOSE: Write single value attribute data to a record
     #
     #   INPUTS:
@@ -8,6 +8,7 @@ def WriteSingleValue(mi, db, table, record, RecData, SV):
     #       record  Granta MI record to write data to
     #       RecData Python Dictionary containing record data to write
     #       SV      List of Single Value Attributes
+    #       status  conflict status
     #   OUTPUTS  
     #       record  Record with populated data
 
@@ -18,13 +19,17 @@ def WriteSingleValue(mi, db, table, record, RecData, SV):
     for att in SV:
         try:
             if RecData[att]['Value'] != None:
+
+                # Check for existing value
+                if record.attributes[att].value is not None and status == "Do Not Replace":
+                    continue
+                
                 # Check for Logic
                 if record.attributes[att].type == 'LOGI':
                     if RecData[att]['Value'] == 'Yes':
                         RecData[att]['Value'] = True
                     else:
                         RecData[att]['Value'] = False
-
 
                 # Write Value
                 record.attributes[att].value = RecData[att]['Value']

@@ -34,29 +34,34 @@ def WriteTabular(mi, record, RecData, TB, status):
                     while tab.shape[1] > 0:
                         tab.delete_row(0)
 
+                # Get Linked Columns
+                row_loc = []
+                for i in range(len(tab.linked_columns)):
+                    if tab.linked_columns[i] == False:
+                        row_loc.append(tab.columns[i])
+
                 # Add new data
                 for i in range(len(RecData[att]['Values'])):
-                    # Check if row exists
-                    flag = 0
+                    # Get Local Data Columns Only
+                    col = RecData[att]['Columns'] 
                     row = RecData[att]['Values'][i]
-                    for kk in range(tab.shape[1]):
-                        row_chk = []
-                        for ii in range(len(row)):
-                            row_chk.append(1)
-                        for jj in range(len(row)):
-                            if tab.value[kk][jj] == row[jj]:
-                                row_chk[jj] = 0
-                        if sum(row_chk) == 0:
-                            flag = 1
 
-                    # Write new row of data
-                    if flag == 0:
+                    # Get all existing data
+                    tab_exist = []
+                    for j in range(tab.shape[1]):
+                        tab_row = []
+                        for k in range(len(col)):
+                            col_name = col[k]
+                            col_idx = tab.columns.index(col_name)
+                            tab_row.append(tab.value[j][col_idx])
+                        tab_exist.append(tab_row)
+
+                    # Check if the row exists, write data if it doesn't
+                    if row not in tab_exist:
                         tab.add_row()
-                        for j in range(len(RecData[att]['Values'][i])):
-                            col_idx = tab.columns.index(RecData[att]['Columns'][j])                 
-                            tab.value[i][col_idx] = RecData[att]['Values'][i][j]
-                            if RecData[att]['Units'][j] != None:
-                                tab.units.data[i][col_idx] = RecData[att]['Units'][j]
+                        for k in range(len(tab.columns)):
+                            if tab.columns[k] in col:
+                                tab.value[tab.shape[1]-1][k] = row[col.index(tab.columns[k])]
 
             # Add attribute to list of attributes to update
             AttList.append(tab)

@@ -1,12 +1,13 @@
-def GetRecord(mi, db, table, name, parent):
+def GetRecord(mi, db, table, name, short_name, parent):
     #   PURPOSE: Get the new record by either creating one if it doesn't exist or fetching one 
     #            that does exist
     #   INPUTS:
-    #       mi      Granta Server Connection
-    #       db      Selected Granta Database
-    #       table   Selected Granta Table
-    #       name    Name of the new record
-    #       parent  Parent record
+    #       mi          Granta Server Connection
+    #       db          Selected Granta Database
+    #       table       Selected Granta Table
+    #       name        Name of the new record
+    #       short_name  Shorrt name of the new record
+    #       parent      Parent record
     #
     #   OUTPUTS  
     #       record  Record to write data to
@@ -27,5 +28,7 @@ def GetRecord(mi, db, table, name, parent):
         guid = parent.children[children.index(name)].record_guid
 
     record = db.get_record_by_id(vguid=guid)
+    if short_name is not None:
+        record.short_name = short_name
 
     return record

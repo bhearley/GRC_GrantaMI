@@ -62,6 +62,10 @@ def WriteTabular(mi, record, RecData, TB, status):
                         for k in range(len(tab.columns)):
                             if tab.columns[k] in col:
                                 tab.value[tab.shape[1]-1][k] = row[col.index(tab.columns[k])]
+                                try:
+                                    tab.units[k] = RecData[att]['Units'][k]
+                                except:
+                                    pass
 
             # Add attribute to list of attributes to update
             AttList.append(tab)

@@ -13,20 +13,6 @@ def UnitConversion(source_unit, source_value, target_unit):
     #    target_value   the value after conversion
     #---------------------------------------------------------------------------
 
-    #---------------------------------------------------------------------------
-    # UnitConversion.py
-    #
-    # PURPOSE: Perform Unit Conversion
-    #
-    # INPUTS:
-    #    source_unit    the units to convert from
-    #    source_value   the value for conversion
-    #    target_unit    the units to convert to
-    #
-    # OUTPUTS:
-    #    target_value   the value after conversion
-    #---------------------------------------------------------------------------
-
     # Import Modules
     import numpy as np
     import re

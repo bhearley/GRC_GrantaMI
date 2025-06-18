@@ -12,6 +12,8 @@ def WriteSingleValue(mi, record, RecData, SV, status):
     #   OUTPUTS  
     #       record  Record with populated data
 
+    from datetime import datetime
+
     # Preallocate List of Attributes to update
     AttList = []
 
@@ -30,6 +32,10 @@ def WriteSingleValue(mi, record, RecData, SV, status):
                         RecData[att]['Value'] = True
                     else:
                         RecData[att]['Value'] = False
+
+                # Check for Date
+                if record.attributes[att].type == 'DTTM':
+                    RecData[att]['Value'] = datetime.strptime(RecData[att]['Value'], "%m/%d/%Y")
 
                 # Write Value
                 record.attributes[att].value = RecData[att]['Value']

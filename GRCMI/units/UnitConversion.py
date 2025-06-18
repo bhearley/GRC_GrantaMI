@@ -46,7 +46,7 @@ def UnitConversion(source_unit, source_value, target_unit):
         str_val = data[0].replace('x', np.array2string(source_value, threshold=np.inf))
         str_val = str_val.replace('[','np.array([')
         str_val = str_val.replace(']','])')
-        str_val = re.sub(r'(?<=\d)\s+(?=[-]?\d)', ', ', str_val)
+        str_val = re.sub(r'(?<=[\d.])\s+(?=[-]?\d)', ', ', str_val)
         val = eval(str_val)
 
     else:
@@ -65,7 +65,7 @@ def UnitConversion(source_unit, source_value, target_unit):
         str_val = data[1].replace('x', np.array2string(val, threshold=np.inf))
         str_val = str_val.replace('[','np.array([')
         str_val = str_val.replace(']','])')
-        str_val = re.sub(r'(?<=\d)\s+(?=[-]?\d)', ', ', str_val)
+        str_val = re.sub(r'(?<=[\d.])\s+(?=[-]?\d)', ', ', str_val)
         target_value = eval(str_val)
 
     else:

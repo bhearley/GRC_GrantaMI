@@ -13,7 +13,7 @@ from GRCMI import Connect, LinkedFunctional
 #   1   Run with defined table and database
 #   2   Run with defined database
 #   3   Run for entire server
-options = 0
+options = 1
 
 # Functions
 def ClearData():

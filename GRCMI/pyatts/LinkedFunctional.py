@@ -8,6 +8,13 @@ def LinkedFunctional(mi, dbs = None, tables = None):
 
     # Preallocate Error Message
     msg = ''
+    
+    # Import Functions
+    try:
+        from GRANTA_MIScriptingToolkit import granta as mpy
+    except:
+        msg = msg + 'ERROR 2000: Unable to import Granta Scripting Toolkit'
+    
 
     # Get List of databases to search
     # -- Preallocate databases dicitonary
@@ -123,7 +130,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                 for record in srch_res:
                     # Get the functional attribute and tabular meta-attribute
                     func = record.attributes[att]
-                    if func.type is not "FUNC":
+                    if func.type != "FUNC":
                         msg = msg + "ERROR: " + att + " in Table " + table.name + "is not type FUNC.\n"
                         return msg
                     tabl = func.meta_attributes['Functional Linking Data']
@@ -281,93 +288,86 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         # Perform Search
                         link_srch_crit = link_att.search_criterion(equal_to =link_val)
                         link_srch_res = link_table.search_for_records_where([link_srch_crit])
+                        link_record = link_srch_res[0]
                         link_txt = ''
 
-                        for link_record in link_srch_res:
-                            # Organize the data
-                            link_func = link_record.attributes[link_func.name]
+                        # Organize the data
+                        link_func = link_record.attributes[link_func.name]
 
-                            # Get the X and Y Columns
-                            link_params = list(link_func.parameters.keys())
-                            link_x_colp = None
-                            for i in range(len(link_params)):
-                                if link_func.parameters[link_params[i]].unit == func.parameters[x_param].unit:
-                                    link_x_colp = i
-                                    break
-                                else:
-                                    try:
-                                        conv_dict = db.dimensionally_equivalent_units(link_func.parameters[link_params[i]].unit)
-                                        if func.parameters[x_param].unit in conv_dict.keys():
-                                            link_x_colp = i
-                                            break
-                                    except:
-                                        pass
-
-                            if link_x_colp is None:
-                                msg = msg + "ERROR: Unable to convert parameter values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
-                                return msg
+                        # Get the X and Y Columns
+                        link_params = list(link_func.parameters.keys())
+                        link_x_colp = None
+                        for i in range(len(link_params)):
+                            if link_func.parameters[link_params[i]].unit == func.parameters[x_param].unit:
+                                link_x_colp = i
+                                break
                             else:
-                                for j, hdr in enumerate(link_func.column_headers):
-                                    hdr_val = hdr.split('[')[0].strip()
-                                    if hdr_val == link_params[link_x_colp]:
-                                        link_x_col = j
-                                        break
-
-                            link_y_col = None
-                            for j in range(len(link_params)):
-                                if link_func.unit == func.unit:
-                                    link_y_col = j
-                                    break
-                                else:
-                                    try:
-                                        conv_dict = db.dimensionally_equivalent_units(link_func.unit)
-                                        if func.unit in conv_dict.keys():
-                                            link_y_col = j
-                                            break
-                                    except:
-                                        pass
-
-                            if link_y_col is None:
-                                msg = msg + "ERROR: Unable to convert values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
-                                return msg
-
-                            # Write Data
-                            for j in range(1,len(link_func.value)):
                                 try:
-                                    # -- Write Functional Data
-                                    y_val = float(link_func.value[j][link_y_col])
-                                    source_unit = link_func.unit
-                                    target_unit = func.unit
-                                    if source_unit != target_unit:
-                                        conv_dict = db.dimensionally_equivalent_units(source_unit)
-                                        y_val = y_val*conv_dict[target_unit]['factor'] + conv_dict[target_unit]['offset']
-
-                                    x_val = float(link_func.value[j][link_x_col])
-                                    source_unit = link_func.parameters[link_params[link_x_colp]].unit
-                                    target_unit = func.parameters[x_param].unit
-                                    if source_unit != target_unit:
-                                        conv_dict = db.dimensionally_equivalent_units(source_unit)
-                                        x_val = x_val*conv_dict[target_unit]['factor'] + conv_dict[target_unit]['offset'] 
-
-                                    func.add_point({'y':y_val,
-                                                    x_param:x_val,
-                                                    l_param:link_lab})
-                                    
-                                    
+                                    conv_dict = db.dimensionally_equivalent_units(link_func.parameters[link_params[i]].unit)
+                                    if func.parameters[x_param].unit in conv_dict.keys():
+                                        link_x_colp = i
+                                        break
                                 except:
-                                    msg = msg + "ERROR: Unable to add values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
-                                    return msg
+                                    pass
+
+                        if link_x_colp is None:
+                            msg = msg + "ERROR: Unable to convert parameter values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            return msg
+                        else:
+                            for j, hdr in enumerate(link_func.column_headers):
+                                hdr_val = hdr.split('[')[0].strip()
+                                if hdr_val == link_params[link_x_colp]:
+                                    link_x_col = j
+                                    break
+
+                        link_y_col = None
+                        for j in range(len(link_params)):
+                            if link_func.unit == func.unit:
+                                link_y_col = j
+                                break
+                            else:
+                                try:
+                                    conv_dict = db.dimensionally_equivalent_units(link_func.unit)
+                                    if func.unit in conv_dict.keys():
+                                        link_y_col = j
+                                        break
+                                except:
+                                    pass
+
+                        if link_y_col is None:
+                            msg = msg + "ERROR: Unable to convert values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            return msg
+
+                        # Write Data
+                        for j in range(1,len(link_func.value)):
+                            try:
+                                # -- Write Functional Data
+                                y_val = float(link_func.value[j][link_y_col])
+                                source_unit = link_func.unit
+                                target_unit = func.unit
+                                if source_unit != target_unit:
+                                    conv_dict = db.dimensionally_equivalent_units(source_unit)
+                                    y_val = y_val*conv_dict[target_unit]['factor'] + conv_dict[target_unit]['offset']
+
+                                x_val = float(link_func.value[j][link_x_col])
+                                source_unit = link_func.parameters[link_params[link_x_colp]].unit
+                                target_unit = func.parameters[x_param].unit
+                                if source_unit != target_unit:
+                                    conv_dict = db.dimensionally_equivalent_units(source_unit)
+                                    x_val = x_val*conv_dict[target_unit]['factor'] + conv_dict[target_unit]['offset'] 
+
+                                func.add_point({'y':y_val,
+                                                x_param:x_val,
+                                                l_param:link_lab})
                                 
-                            # Update Link Text
-                            # -- Text
-                            link_txt = link_txt + link_record.name + ": " + link_record.viewer_url  +  '\n'
+                                
+                            except:
+                                msg = msg + "ERROR: Unable to add values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                                return msg
                             
-                            # -- HTML (not currently supported for LTXT)
-                            #link_txt = link_txt + '<a href="' + link_record.viewer_url + '">' + link_record.name + '</a>'  +  '\n'
                                 
                         # Update Link Text in Tabular Meta Attribute
-                        if link_txt != '':
-                            tabl.value[i][tabl.columns.index('Link')] = link_txt
+                        tabl.value[i][tabl.columns.index('Link')] = mpy.Hyperlink(url=link_record.viewer_url , hyperlink_display="New", hyperlink_description=link_record.name)
                         
                     # Update the record
                     record.set_attributes([func, tabl])

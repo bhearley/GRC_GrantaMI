@@ -373,15 +373,3 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                     # Add success message
                     msg = msg + 'Succesfully updated ' + record.name + '. \n'
     return msg
-
-# Connect to the database
-from GRCMI import Connect
-
-server_name = "https://granta.ndc.nasa.gov"
-db_key = "NasaGRC_MD_45_09-2-05"
-table_name = "Development Table #2"
-mi, db, table = Connect(server_name, db_key, table_name)
-
-# Run
-msg = LinkedFunctional(mi, dbs = db, tables = table_name)
-print(msg)

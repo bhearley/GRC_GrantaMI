@@ -123,6 +123,9 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                 for record in srch_res:
                     # Get the functional attribute and tabular meta-attribute
                     func = record.attributes[att]
+                    if func.type is not "FUNC":
+                        msg = msg + "ERROR: " + att + " in Table " + table.name + "is not type FUNC.\n"
+                        return msg
                     tabl = func.meta_attributes['Functional Linking Data']
 
                     # -- Determine X and Label Parameters

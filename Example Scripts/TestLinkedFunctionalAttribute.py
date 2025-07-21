@@ -13,7 +13,7 @@ from GRCMI import Connect, LinkedFunctional
 #   1   Run with defined table and database
 #   2   Run with defined database
 #   3   Run for entire server
-options = 1
+options = 0
 
 # Functions
 def ClearData():
@@ -42,7 +42,12 @@ def ClearData():
                         'Strain':float(orig_data[i][2]),
                         'Simulation Data':orig_data[i][3]})
         
-    record.set_attributes([func])
+    # Clear the Link
+    tabl = func.meta_attributes['Functional Linking Data']
+    for i in range(len(tabl.value)):
+        tabl.value[i][tabl.columns.index('Link')] = None
+        
+    record.set_attributes([func, tabl])
     record = mi.update([record])[0]
 
     return
@@ -52,10 +57,10 @@ if options == 0:
     # Clear Data
     ClearData()
 
-# Run with defined table
+# Run with defined tables
 if options == 1:
     # Clear Data
-    ClearData
+    ClearData()
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -65,4 +70,33 @@ if options == 1:
 
     # Run
     msg = LinkedFunctional(mi, dbs = db, tables = ["Development Table #1", "Development Table #2"])
+    print(msg)
+
+# Run with defined database
+if options == 2:
+    # Clear Data
+    ClearData()
+
+    # Connect to the database
+    server_name = "https://granta.ndc.nasa.gov"
+    db_key = "NasaGRC_MD_45_09-2-05"
+    table_name = "Development Table #2"
+    mi, db, table = Connect(server_name, db_key, table_name)
+
+    # Run
+    msg = LinkedFunctional(mi, dbs = db)
+    print(msg)
+
+if options == 3:
+    # Clear Data
+    ClearData()
+
+    # Connect to the database
+    server_name = "https://granta.ndc.nasa.gov"
+    db_key = "NasaGRC_MD_45_09-2-05"
+    table_name = "Development Table #2"
+    mi, db, table = Connect(server_name, db_key, table_name)
+
+    # Run
+    msg = LinkedFunctional(mi)
     print(msg)

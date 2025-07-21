@@ -6,9 +6,6 @@ def LinkedFunctional(mi, dbs = None, tables = None):
     #       dbs     List of database keys or database objects
     #       tables  List of table names or table objects
 
-    # Import Modules
-    import numpy as np
-
     # Preallocate Error Message
     msg = ''
 
@@ -80,7 +77,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
         else:
             # Add dbs to list if not in list
             if isinstance(tables, list) == False:
-                tables = [dbs]
+                tables = [tables]
             for table in tables:
                 # Check if item is string
                 if isinstance(table, str):
@@ -124,8 +121,9 @@ def LinkedFunctional(mi, dbs = None, tables = None):
 
                 # -- Apply to all records found
                 for record in srch_res:
-                    # Get the functional attribute
+                    # Get the functional attribute and tabular meta-attribute
                     func = record.attributes[att]
+                    tabl = func.meta_attributes['Functional Linking Data']
 
                     # -- Determine X and Label Parameters
                     x_param = None
@@ -213,6 +211,11 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         except:
                             msg = msg + "ERROR: 'Label' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
                             return msg
+                        try:
+                            link_link = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Link')]
+                        except:
+                            msg = msg + "ERROR: 'Link' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            return msg
 
                         # Perform Checks
                         # -- Check Database
@@ -275,6 +278,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         # Perform Search
                         link_srch_crit = link_att.search_criterion(equal_to =link_val)
                         link_srch_res = link_table.search_for_records_where([link_srch_crit])
+                        link_txt = ''
 
                         for link_record in link_srch_res:
                             # Organize the data
@@ -300,22 +304,22 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                 msg = msg + "ERROR: Unable to convert parameter values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                                 return msg
                             else:
-                                for i, hdr in enumerate(link_func.column_headers):
+                                for j, hdr in enumerate(link_func.column_headers):
                                     hdr_val = hdr.split('[')[0].strip()
                                     if hdr_val == link_params[link_x_colp]:
-                                        link_x_col = i
+                                        link_x_col = j
                                         break
 
                             link_y_col = None
-                            for i in range(len(link_params)):
+                            for j in range(len(link_params)):
                                 if link_func.unit == func.unit:
-                                    link_y_col = i
+                                    link_y_col = j
                                     break
                                 else:
                                     try:
                                         conv_dict = db.dimensionally_equivalent_units(link_func.unit)
                                         if func.unit in conv_dict.keys():
-                                            link_y_col = i
+                                            link_y_col = j
                                             break
                                     except:
                                         pass
@@ -325,16 +329,17 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                 return msg
 
                             # Write Data
-                            for i in range(1,len(link_func.value)):
+                            for j in range(1,len(link_func.value)):
                                 try:
-                                    y_val = float(link_func.value[i][link_y_col])
+                                    # -- Write Functional Data
+                                    y_val = float(link_func.value[j][link_y_col])
                                     source_unit = link_func.unit
                                     target_unit = func.unit
                                     if source_unit != target_unit:
                                         conv_dict = db.dimensionally_equivalent_units(source_unit)
                                         y_val = y_val*conv_dict[target_unit]['factor'] + conv_dict[target_unit]['offset']
 
-                                    x_val = float(link_func.value[i][link_x_col])
+                                    x_val = float(link_func.value[j][link_x_col])
                                     source_unit = link_func.parameters[link_params[link_x_colp]].unit
                                     target_unit = func.parameters[x_param].unit
                                     if source_unit != target_unit:
@@ -344,12 +349,39 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                     func.add_point({'y':y_val,
                                                     x_param:x_val,
                                                     l_param:link_lab})
+                                    
+                                    
                                 except:
                                     msg = msg + "ERROR: Unable to add values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                                     return msg
+                                
+                            # Update Link Text
+                            # -- Text
+                            link_txt = link_txt + link_record.name + ": " + link_record.viewer_url  +  '\n'
+                            
+                            # -- HTML (not currently supported for LTXT)
+                            #link_txt = link_txt + '<a href="' + link_record.viewer_url + '">' + link_record.name + '</a>'  +  '\n'
+                                
+                        # Update Link Text in Tabular Meta Attribute
+                        if link_txt != '':
+                            tabl.value[i][tabl.columns.index('Link')] = link_txt
                         
-                    record.set_attributes([func])
+                    # Update the record
+                    record.set_attributes([func, tabl])
                     record = mi.update([record])[0]
 
+                    # Add success message
                     msg = msg + 'Succesfully updated ' + record.name + '. \n'
     return msg
+
+# Connect to the database
+from GRCMI import Connect
+
+server_name = "https://granta.ndc.nasa.gov"
+db_key = "NasaGRC_MD_45_09-2-05"
+table_name = "Development Table #2"
+mi, db, table = Connect(server_name, db_key, table_name)
+
+# Run
+msg = LinkedFunctional(mi, dbs = db, tables = table_name)
+print(msg)

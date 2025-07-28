@@ -111,7 +111,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                         msg = msg + "ERROR 3003: Invalid value for 'tables' given.\n"
                         return msg
                     
-                    if table in table_list:
+                    if table_name in table_list:
                         databases[db_i].append(table)
                     else:
                         msg = msg + "WARNING: Unable to get table " + table_name + " from database " + db_i.db_key + ". \n"

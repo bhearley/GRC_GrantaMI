@@ -1,12 +1,9 @@
 #---------------------------------------------------------------------------
-# TestLinkedFunctionalAttribute.py
+# TestParameterFunctionalAttribute.py
 #
-# PURPOSE: Test Functionality of Linked Functional Attribute
+# PURPOSE: Test Functionality of Parameter Functional Attribute
 #
 #---------------------------------------------------------------------------
-
-# Import Functions
-from GRCMI import Connect, LinkedFunctional
 
 # Set Options
 #   0   Clear Only
@@ -17,39 +14,23 @@ options = 1
 
 # Functions
 def ClearData():
+    # Import Functions
+    from GRCMI import Connect
+
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     db_key = "NasaGRC_MD_45_09-2-05"
-    table_name = "Development Table #2"
+    table_name = "Development Table #1"
     mi, db, table = Connect(server_name, db_key, table_name)
-    record = table.search_for_records_by_name('Simulation Data Record')[0]
-    func = record.attributes['Simulation Data: Stress vs Strain']
 
-    # Get Orginal Data
-    # -- Get All Functional Data
-    all_data = func.value[1:]
+    # Get the record
+    record = table.search_for_records_by_name('Parameter Based Functional Attribute Demo')[0]
 
-    # -- Extract orginal local data
-    orig_data = []
-    for i in range(len(all_data)):
-        if all_data[i][3] not in ['Test']:
-            orig_data.append(all_data[i])
-
-    # Clear the attribute and write local data
+    # Clear the functional data
+    func = record.attributes['FP Demo']
     func.clear()
-    for i in range(len(orig_data)):
-        func.add_point({'y':float(orig_data[i][0]),
-                        'Strain':float(orig_data[i][2]),
-                        'Simulation Data':orig_data[i][3]})
-        
-    # Clear the Link
-    tabl = func.meta_attributes['Functional Linking Data']
-    for i in range(len(tabl.value)):
-        tabl.value[i][tabl.columns.index('Link')] = None
-        
-    record.set_attributes([func, tabl])
+    record.set_attributes([func])
     record = mi.update([record])[0]
-
     return
 
 # Clear only
@@ -63,16 +44,16 @@ if options == 1:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, LinkedFunctional
+    from GRCMI import Connect, ParameterFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     db_key = "NasaGRC_MD_45_09-2-05"
-    table_name = "Development Table #2"
+    table_name = "Development Table #1"
     mi, db, table = Connect(server_name, db_key, table_name)
 
     # Run
-    msg = LinkedFunctional(mi, dbs = db, tables = ["Development Table #1", "Development Table #2"])
+    msg = ParameterFunctional(mi, dbs = db, tables = table)
     print(msg)
 
 # Run with defined database

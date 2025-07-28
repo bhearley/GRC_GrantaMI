@@ -13,7 +13,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
     try:
         from GRANTA_MIScriptingToolkit import granta as mpy
     except:
-        msg = msg + 'ERROR 2000: Unable to import Granta Scripting Toolkit'
+        msg = msg + 'ERROR 2000: Unable to import Granta Scripting Toolkit \n'
     
 
     # Get List of databases to search
@@ -23,7 +23,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
     try:
         db_keys = list(mi.dbs_by_key.keys())
     except:
-        msg = msg + "ERROR: Unable to get databases on server. \n"
+        msg = msg + "ERROR 2001: Unable to get databases on server. \n"
         return msg
 
     # -- No databases list defined
@@ -57,7 +57,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                 try:
                     db_key = db.db_key 
                 except:
-                    msg = msg + "ERROR: Invalid value for 'dbs' given.\n"
+                    msg = msg + "ERROR 2002: Invalid value for 'dbs' given.\n"
                     return msg
                 
                 if db_key in db_keys:
@@ -101,7 +101,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                     try:
                         table_name = table.name
                     except:
-                        msg = msg + "ERROR: Invalid value for 'tables' given.\n"
+                        msg = msg + "ERROR 2003: Invalid value for 'tables' given.\n"
                         return msg
                     
                     if table in table_list:
@@ -131,9 +131,12 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                     # Get the functional attribute and tabular meta-attribute
                     func = record.attributes[att]
                     if func.type != "FUNC":
-                        msg = msg + "ERROR: " + att + " in Table " + table.name + "is not type FUNC.\n"
+                        msg = msg + "ERROR 2004: " + att + " in Table " + table.name + "is not type FUNC.\n"
                         return msg
                     tabl = func.meta_attributes['Functional Linking Data']
+                    if func.type != "TABL":
+                        msg = msg + "ERROR 2005: Functional Linking Data meta-attribute in " + att + " in Table " + table.name + "is not type TABL.\n"
+                        return msg
 
                     # -- Determine X and Label Parameters
                     x_param = None
@@ -149,7 +152,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                 l_param_opts = func.parameters[param].values
 
                     if l_param is None:
-                        msg = msg + "ERROR:" + att + " Does not have a discrete parameter. Contact the database administrator.\n"
+                        msg = msg + "ERROR 2006:" + att + " Does not have a discrete parameter.\n"
                         return msg
                     
                     # -- Determine column indices
@@ -173,7 +176,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         try:
                             lab_list.append(func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Label')])
                         except:
-                            msg = msg + "ERROR: 'Label' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2012: 'Label' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
 
                     # -- Extract orginal local data
@@ -194,37 +197,37 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         try:
                             link_db = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Database')]
                         except:
-                            msg = msg + "ERROR: 'Database' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2007: 'Database' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
                         try:
                             link_table = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Table')]
                         except:
-                            msg = msg + "ERROR: 'Table' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2008: 'Table' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
                         try:
                             link_func = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Attribute')]
                         except:
-                            msg = msg + "ERROR: 'Attribute' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2009: 'Attribute' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
                         try:
                             link_att = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Linking Attribute')]
                         except:
-                            msg = msg + "ERROR: 'Linking Attribute' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2010: 'Linking Attribute' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
                         try:
                             link_val = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Linking Value')]
                         except:
-                            msg = msg + "ERROR: 'Linking Value' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2011: 'Linking Value' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
                         try:
                             link_lab = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Label')]
                         except:
-                            msg = msg + "ERROR: 'Label' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2012: 'Label' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
                         try:
                             link_link = func.meta_attributes["Functional Linking Data"].value[i][func.meta_attributes["Functional Linking Data"].columns.index('Link')]
                         except:
-                            msg = msg + "ERROR: 'Link' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Contact the database administrator.\n"
+                            msg = msg + "ERROR 2013: 'Link' column in " + att + " in Table " + table.name + "/Record " + record.name + " could not be found.\n"
                             return msg
 
                         # Perform Checks
@@ -235,54 +238,54 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                             try:
                                 link_db = mi.get_db(db_key = link_db)
                             except:
-                                msg = msg + "ERROR: Linking Database defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the database key.\n"
+                                msg = msg + "ERROR 2014: Linking Database defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the database key.\n"
                                 return msg
                             
                         # -- Check Table
                         if link_table is None:
-                            msg = msg + "ERROR: 'Table' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            msg = msg + "ERROR 2015: 'Table' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                             return msg
                         try:
                             link_table = link_db.get_table(link_table)
                         except:
-                            msg = msg + "ERROR: Linking Table defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the table name.\n"
+                            msg = msg + "ERROR 2016: Linking Table defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the table name.\n"
                             return msg
                         
                         # -- Check Attribute
                         if link_func is None:
-                            msg = msg + "ERROR: 'Attribute' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            msg = msg + "ERROR 2017: 'Attribute' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                             return msg
                         try:
                             link_func = link_table.attributes[link_func]
                         except:
-                            msg = msg + "ERROR: Linking Functional Attribute defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the attribute name.\n"
+                            msg = msg + "ERROR 2018: Linking Functional Attribute defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the attribute name.\n"
                             return msg
                         
                         # -- Check Linking Attribute
                         if link_att is None:
-                            msg = msg + "ERROR: 'Linking Attribute' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            msg = msg + "ERROR 2019: 'Linking Attribute' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                             return msg
                         try:
                             link_att = link_table.attributes[link_att]
                         except:
-                            msg = msg + "ERROR: Linking Attribute defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the attribute name.\n"
+                            msg = msg + "ERROR 2020: Linking Attribute defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Check the attribute name.\n"
                             return msg
                         link_types = ['DCT', 'STXT']
                         if link_att.type not in link_types:
-                            msg = msg + "ERROR: Invalid Linking Attribute Type defined for " + att + " in Table " + table.name + "/Record " + record.name + " could not be found. Linking Attribute must be STXT or DCT.\n"
+                            msg = msg + "ERROR 2021: Invalid Linking Attribute Type defined for " + att + " in Table " + table.name + "/Record " + record.name + ". Linking Attribute must be STXT or DCT.\n"
                             return msg
                         
                         # -- Check Value
                         if link_val is None:
-                            msg = msg + "ERROR: 'Linking Value' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            msg = msg + "ERROR 2022: 'Linking Value' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                             return msg
                         
                         # -- Check Label
                         if link_lab is None:
-                            msg = msg + "ERROR: 'Label' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            msg = msg + "ERROR 2023: 'Label' must be defined in " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                             return msg
                         if link_lab not in l_param_opts:
-                            msg = msg + "ERROR: Label defined for " + att + " in Table " + table.name + "/Record " + record.name + " is not valid.\n"
+                            msg = msg + "ERROR 2024: Label defined for " + att + " in Table " + table.name + "/Record " + record.name + " is not valid.\n"
                             return msg
 
                         # Perform Search
@@ -311,7 +314,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                     pass
 
                         if link_x_colp is None:
-                            msg = msg + "ERROR: Unable to convert parameter values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            msg = msg + "ERROR 2025: Unable to convert parameter values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                             return msg
                         else:
                             for j, hdr in enumerate(link_func.column_headers):
@@ -335,7 +338,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                     pass
 
                         if link_y_col is None:
-                            msg = msg + "ERROR: Unable to convert values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                            msg = msg + "ERROR 2026: Unable to convert values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                             return msg
 
                         # Write Data
@@ -362,7 +365,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                 
                                 
                             except:
-                                msg = msg + "ERROR: Unable to add values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
+                                msg = msg + "ERROR 2027: Unable to add values for " + att + " in Table " + table.name + "/Record " + record.name + ".\n"
                                 return msg
                             
                                 

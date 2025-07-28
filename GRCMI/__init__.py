@@ -1,5 +1,6 @@
 # Import Core Functionality
 from .pyatts import LinkedFunctional
+from .pyatts import ParameterFunctional
 from .utils import Connect
 from .utils import GetFileObject
 from .utils import GetParent
@@ -10,4 +11,4 @@ from .utils import WriteStaticLinks
 from .utils import WriteTabular
 from .units import UnitConversion
 
-__all__ = ['LinkedFunctional', 'Connect','GetFileObject', 'GetParent', 'GetRecord', 'WriteFunctional', 'WriteSingleValue','WriteStaticLinks', 'WriteTabular', 'UnitConversion']
+__all__ = ['LinkedFunctional', 'ParameterFunctional', 'Connect','GetFileObject', 'GetParent', 'GetRecord', 'WriteFunctional', 'WriteSingleValue','WriteStaticLinks', 'WriteTabular', 'UnitConversion']

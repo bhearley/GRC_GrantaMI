@@ -24,6 +24,7 @@ def ClearData():
     mi, db, table = Connect(server_name, db_key, table_name)
     record = table.search_for_records_by_name('Simulation Data Record')[0]
     func = record.attributes['Simulation Data: Stress vs Strain']
+    tabl = record.attributes['Simulation Data: Stress vs Strain Functional Linking Data']
 
     # Get Orginal Data
     # -- Get All Functional Data
@@ -43,7 +44,6 @@ def ClearData():
                         'Simulation Data':orig_data[i][3]})
         
     # Clear the Link
-    tabl = func.meta_attributes['Functional Linking Data']
     for i in range(len(tabl.value)):
         tabl.value[i][tabl.columns.index('Link')] = None
         

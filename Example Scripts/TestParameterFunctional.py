@@ -53,7 +53,7 @@ if options == 1:
     mi, db, table = Connect(server_name, db_key, table_name)
 
     # Run
-    msg = ParameterFunctional(mi, dbs = db, tables = table)
+    msg = ParameterFunctional(mi, db, table)
     print(msg)
 
 # Run with defined database
@@ -61,26 +61,29 @@ if options == 2:
     # Clear Data
     ClearData()
 
+    # Import Functions
+    from GRCMI import Connect, ParameterFunctional
+
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     db_key = "NasaGRC_MD_45_09-2-05"
-    table_name = "Development Table #2"
-    mi, db, table = Connect(server_name, db_key, table_name)
+    mi, db = Connect(server_name, db_key)
 
     # Run
-    msg = LinkedFunctional(mi, dbs = db)
+    msg = ParameterFunctional(mi, db)
     print(msg)
 
 if options == 3:
     # Clear Data
     ClearData()
 
+    # Import Functions
+    from GRCMI import Connect, ParameterFunctional
+
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
-    db_key = "NasaGRC_MD_45_09-2-05"
-    table_name = "Development Table #2"
-    mi, db, table = Connect(server_name, db_key, table_name)
+    mi = Connect(server_name)
 
     # Run
-    msg = LinkedFunctional(mi)
+    msg = ParameterFunctional(mi)
     print(msg)

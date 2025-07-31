@@ -15,7 +15,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
     try:
         from GRANTA_MIScriptingToolkit import granta as mpy
     except:
-        msg = msg + 'ERROR 3000: Unable to import Granta Scripting Toolkit \n'
+        msg = msg + 'ERROR 3000: Unable to import Granta Scripting Toolkit. \n'
     
     # Preallocate databases dicitonary
     databases = {}
@@ -158,7 +158,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                     
                     # Check for at least two parameters
                     if len(table.attributes[func_att].parameters) < 2:
-                        msg = msg + "ERROR 3009: " + func_att + " in table " + table.name + " is not type must have at least two parameters, one functional and one discrete.\n"
+                        msg = msg + "ERROR 3009: " + func_att + " in table " + table.name + " must have at least two parameters, one functional and one discrete.\n"
                         return msg
                     
                     # Check that 'Series Number' exists as a parameter
@@ -204,7 +204,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                 return msg
                             
                             if rng is None:
-                                msg = msg + "ERROR 3014: Expression in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
+                                msg = msg + "ERROR 3014: Range in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
                                 return msg
                             
                             if rng_u is None:
@@ -237,7 +237,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
 
                                     # Check that attribute is defined
                                     if val == []:
-                                        msg = msg + "ERROR 3017: Attribute " + p + " in record " + record.name + " in table " + table.name + " not defined.\n"
+                                        msg = msg + "ERROR 3017: Attribute " + p + " in record " + record.name + " in table " + table.name + " is not defined.\n"
                                         return msg
 
                                 # Defined using tabular attributes
@@ -245,7 +245,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                     # Get tabular attribute info
                                     p_full = p_full.split(';')
                                     if len(p_full) != 4:
-                                        msg = msg + "ERROR 3018: Invalid parmaeter definition in row " + str(k+1) + " in " + attribute + " in record " + record.name + " in table " + table.name + ". See documentation.\n"
+                                        msg = msg + "ERROR 3018: Invalid parameter definition in row " + str(k+1) + " in " + attribute + " in record " + record.name + " in table " + table.name + ". See documentation.\n"
                                         return msg
                                     p_tabl = p_full[0].strip()
                                     p_lcol = p_full[1].strip()
@@ -284,12 +284,12 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                     try:
                                         col = p_tabl.columns.index(p_col)
                                     except:
-                                        msg = msg + "ERROR 3023: Column " + p_col + " in " + p_tabl.name + "in record " + record.name + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3023: Column " + p_col + " in " + p_tabl.name + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     
                                     # Check column type
                                     if p_tabl.column_types[col] != "POIN":
-                                        msg = msg + "ERROR 3024: Column " + p_col + " in " + p_tabl.name + "in record " + record.name + " in table " + table.name + " is not type POIN. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3024: Column " + p_col + " in " + p_tabl.name + " in table " + table.name + " is not type POIN. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
 
                                     # Get the value and unit
@@ -297,7 +297,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                     unit = p_tabl.units.data[lrow][col]
 
                                     if val is None:
-                                        msg = msg + "ERROR 3025: Row " + str(lrow) + ", Column " + p_col + " in " + p_tabl.name + " in record " + record.name + " in table " + table.name + " is not defined..\n"
+                                        msg = msg + "ERROR 3025: Row " + str(lrow) + ", Column " + p_col + " in " + p_tabl.name + " in record " + record.name + " in table " + table.name + " is not defined.\n"
                                         return msg
 
                                 # Check for unit conversion
@@ -324,11 +324,11 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                 x_param = rng.split(':')[0].strip()
                                 if x_param in func.parameters.keys():
                                     if func.parameters[x_param].type == 'Discrete':
-                                        msg = msg + "ERROR 3029: Parameter " + x_param + " in " + func.name + " in table " + table.name + " cannot be discrete. Check Range definition.\n"
+                                        msg = msg + "ERROR 3029: Parameter " + x_param + " in " + func.name + " in table " + table.name + " is not continuous. Check Range definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     x_param_u = func.parameters[x_param].unit
                                 else:
-                                    msg = msg + "ERROR 3028: Parameter " + x_param + " is not in " + func.name + " in table " + table.name + ". Check Range definition.\n"
+                                    msg = msg + "ERROR 3028: Parameter " + x_param + " is not in " + func.name + " in table " + table.name + ". Check Range definition in record " + record.name + " in " + attribute + ".\n"
                                     return msg
                                 rng = rng.split(':')[1]
 
@@ -406,4 +406,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                         # Update the record   
                         record.set_attributes([func])
                         record = mi.update([record])[0]
+
+                        # Add success message
+                        msg = msg + 'Succesfully updated ' + record.name + '. \n'
     return msg

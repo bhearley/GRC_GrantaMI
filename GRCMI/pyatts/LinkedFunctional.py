@@ -216,11 +216,8 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         # Get the list of labels
                         lab_list = []
                         for i in range(num_curves):
-                            try:
-                                lab_list.append(tabl.value[i][tabl.columns.index('Label')])
-                            except:
-                                msg = msg + "ERROR 2012: 'Label' column in " + attribute + " in record " + record.name + " in table " + table.name + " could not be found.\n"
-                                return msg
+                            lab_list.append(tabl.value[i][tabl.columns.index('Label')])
+
 
                         # Extract orginal local data
                         orig_data = []
@@ -252,27 +249,30 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                 try:
                                     link_db = mi.get_db(db_key = link_db)
                                 except:
-                                    msg = msg + "ERROR 2013: Linking Database defined for " + attribute + " in record " + record.name + " in table " + table.name +" could not be found. Check the database key.\n"
+                                    msg = msg + "ERROR 2012: Linking Database defined for " + attribute + " in record " + record.name + " in table " + table.name +" could not be found. Check the database key.\n"
                                     return msg
                                 
                             # Check Table
                             if link_table is None:
-                                msg = msg + "ERROR 2014: 'Table' must be defined in " + attribute + " in record " + record.name + " in table " + table.name +".\n"
+                                msg = msg + "ERROR 2013: 'Table' must be defined in " + attribute + " in record " + record.name + " in table " + table.name +".\n"
                                 return msg
                             try:
                                 link_table = link_db.get_table(link_table)
                             except:
-                                msg = msg + "ERROR 2015: Linking Table defined for " + attribute + " in record " + record.name + " in table " + table.name + " could not be found. Check the table name.\n"
+                                msg = msg + "ERROR 2014: Linking Table defined for " + attribute + " in record " + record.name + " in table " + table.name + " could not be found. Check the table name.\n"
                                 return msg
                             
                             # Check Attribute
                             if link_func is None:
-                                msg = msg + "ERROR 2016: 'Attribute' must be defined in " + attribute + " in record " + record.name + " in table " + table.name + ".\n"
+                                msg = msg + "ERROR 2015: 'Attribute' must be defined in " + attribute + " in record " + record.name + " in table " + table.name + ".\n"
                                 return msg
                             try:
                                 link_func = link_table.attributes[link_func]
                             except:
-                                msg = msg + "ERROR 2017: Linking Functional Attribute defined for " + attribute + " in record " + record.name + " in table " + table.name + " could not be found. Check the attribute name.\n"
+                                msg = msg + "ERROR 2016: Linking Functional Attribute defined for " + attribute + " in record " + record.name + " in table " + table.name + " could not be found. Check the attribute name.\n"
+                                return msg
+                            if link_func.type != 'FUNC':
+                                msg = msg + "ERROR 2017: Linking Functional Attribute defined for " + attribute + " in record " + record.name + " in table " + table.name + " must be FUNC.\n"
                                 return msg
                             
                             # Check Linking Attribute

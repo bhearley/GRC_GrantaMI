@@ -12,10 +12,6 @@ def ParameterFunctional(mi, dbs = None, tables = None):
     # Import Functions
     import numpy as np
     import re
-    try:
-        from GRANTA_MIScriptingToolkit import granta as mpy
-    except:
-        msg = msg + 'ERROR 3000: Unable to import Granta Scripting Toolkit. \n'
     
     # Preallocate databases dicitonary
     databases = {}
@@ -24,7 +20,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
     try:
         db_keys = list(mi.dbs_by_key.keys())
     except:
-        msg = msg + "ERROR 3001: Unable to get databases on server. \n"
+        msg = msg + "ERROR 3000: Unable to get databases on server. \n"
         return msg
 
     # No databases list defined - search all databases
@@ -59,7 +55,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                 try:
                     db_key = db.db_key 
                 except:
-                    msg = msg + "ERROR 3002: Invalid value for 'dbs' given.\n"
+                    msg = msg + "ERROR 3001: Invalid value for 'dbs' given.\n"
                     return msg
                 
                 if db_key in db_keys:
@@ -108,7 +104,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                     try:
                         table_name = table.name
                     except:
-                        msg = msg + "ERROR 3003: Invalid value for 'tables' given.\n"
+                        msg = msg + "ERROR 3002: Invalid value for 'tables' given.\n"
                         return msg
                     
                     if table_name in table_list:
@@ -126,7 +122,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
 
                     # Check type
                     if table.attributes[attribute].type != 'TABL':
-                        msg = msg + "ERROR 3004: " + attribute + " in table " + table.name + " is not type TABL.\n"
+                        msg = msg + "ERROR 3003: " + attribute + " in table " + table.name + " is not type TABL.\n"
                         return msg
                     
                     # Check Required Columns
@@ -135,12 +131,12 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                     for col in req_cols:
                         # Check column exists
                         if col not in table.attributes[attribute].columns:
-                            msg = msg + "ERROR 3005: Required column name " + col + " in " + attribute + " in table " + table.name + " was not found.\n"
+                            msg = msg + "ERROR 3004: Required column name " + col + " in " + attribute + " in table " + table.name + " was not found.\n"
                             return msg
                         
                         # Check column type is correct
                         if req_types[req_cols.index(col)] != table.attributes[attribute].column_types[table.attributes[attribute].columns.index(col)]:
-                            msg = msg + "ERROR 3006: Required column name " + col + " in " + attribute + " in table " + table.name + " is not type " + req_types[req_cols.index(col)] + ".\n"
+                            msg = msg + "ERROR 3005: Required column name " + col + " in " + attribute + " in table " + table.name + " is not type " + req_types[req_cols.index(col)] + ".\n"
                             return msg
                     
                     # Get corresponding functional attribute
@@ -148,27 +144,27 @@ def ParameterFunctional(mi, dbs = None, tables = None):
 
                     # Check functional attribute exists
                     if func_att not in table.attributes:
-                        msg = msg + "ERROR 3007: " + attribute + " in table " + table.name + " has no corresponding attribute named " +  func_att +  ".\n"
+                        msg = msg + "ERROR 3006: " + attribute + " in table " + table.name + " has no corresponding attribute named " +  func_att +  ".\n"
                         return msg
 
                     # Check corresponding attribute is functional
                     if table.attributes[func_att].type != 'FUNC':
-                        msg = msg + "ERROR 3008: " + func_att + " in table " + table.name + " is not type FUNC.\n"
+                        msg = msg + "ERROR 3007: " + func_att + " in table " + table.name + " is not type FUNC.\n"
                         return msg
                     
                     # Check for at least two parameters
                     if len(table.attributes[func_att].parameters) < 2:
-                        msg = msg + "ERROR 3009: " + func_att + " in table " + table.name + " must have at least two parameters, one functional and one discrete.\n"
+                        msg = msg + "ERROR 3008: " + func_att + " in table " + table.name + " must have at least two parameters, one functional and one discrete.\n"
                         return msg
                     
                     # Check that 'Series Number' exists as a parameter
                     if 'Series Number' not in table.attributes[func_att].parameters.keys():
-                        msg = msg + "ERROR 3010: " + func_att + " in table " + table.name + " must have a discrete parameter named 'Series Number'.\n"
+                        msg = msg + "ERROR 3009: " + func_att + " in table " + table.name + " must have a discrete parameter named 'Series Number'.\n"
                         return msg
                     
                     # Check that the 'Series Number' parameter is discrete
                     if table.attributes[func_att].parameters['Series Number'].type != 'Discrete':
-                        msg = msg + "ERROR 3011: " + func_att + " in table " + table.name + " must have a discrete parameter named 'Series Number'.\n"
+                        msg = msg + "ERROR 3010: " + func_att + " in table " + table.name + " must have a discrete parameter named 'Series Number'.\n"
                         return msg
                     
                     # Search for records with populated values
@@ -196,15 +192,15 @@ def ParameterFunctional(mi, dbs = None, tables = None):
 
                             # Check that all are populated
                             if s_num is None:
-                                msg = msg + "ERROR 3012: Series Number in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
+                                msg = msg + "ERROR 3011: Series Number in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
                                 return msg
                             
                             if exp is None:
-                                msg = msg + "ERROR 3013: Expression in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
+                                msg = msg + "ERROR 3012: Expression in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
                                 return msg
                             
                             if rng is None:
-                                msg = msg + "ERROR 3014: Range in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
+                                msg = msg + "ERROR 3013: Range in attribute " + attribute + " in record " + record.name + " in table " + table.name + " must be defined.\n"
                                 return msg
                             
                             if rng_u is None:
@@ -224,11 +220,11 @@ def ParameterFunctional(mi, dbs = None, tables = None):
 
                                     # Check for existing attribute
                                     if p not in record.attributes:
-                                        msg = msg + "ERROR 3015: Attribute " + p + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3014: Attribute " + p + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     
                                     if record.attributes[p].type != 'POIN':
-                                        msg = msg + "ERROR 3016: Attribute " + p + " in table " + table.name + " is not type POIN. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3015: Attribute " + p + " in table " + table.name + " is not type POIN. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     
                                     # Get value and unit
@@ -237,7 +233,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
 
                                     # Check that attribute is defined
                                     if val == []:
-                                        msg = msg + "ERROR 3017: Attribute " + p + " in record " + record.name + " in table " + table.name + " is not defined.\n"
+                                        msg = msg + "ERROR 3016: Attribute " + p + " in record " + record.name + " in table " + table.name + " is not defined.\n"
                                         return msg
 
                                 # Defined using tabular attributes
@@ -245,7 +241,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                     # Get tabular attribute info
                                     p_full = p_full.split(';')
                                     if len(p_full) != 4:
-                                        msg = msg + "ERROR 3018: Invalid parameter definition in row " + str(k+1) + " in " + attribute + " in record " + record.name + " in table " + table.name + ". See documentation.\n"
+                                        msg = msg + "ERROR 3017: Invalid parameter definition in row " + str(k+1) + " in " + attribute + " in record " + record.name + " in table " + table.name + ". See documentation.\n"
                                         return msg
                                     p_tabl = p_full[0].strip()
                                     p_lcol = p_full[1].strip()
@@ -255,12 +251,12 @@ def ParameterFunctional(mi, dbs = None, tables = None):
 
                                     # Check for existing attribute
                                     if p_tabl not in record.attributes:
-                                        msg = msg + "ERROR 3019: Attribute " + p_tabl + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3018: Attribute " + p_tabl + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     
                                     # Check for attribute type
                                     if record.attributes[p_tabl].type != 'TABL':
-                                        msg = msg + "ERROR 3020: Attribute " + p_tabl + " in table " + table.name + " is not type TABL. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3019: Attribute " + p_tabl + " in table " + table.name + " is not type TABL. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     p_tabl = record.attributes[p_tabl]
 
@@ -268,7 +264,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                     try:
                                         lcol = p_tabl.columns.index(p_lcol)
                                     except:
-                                        msg = msg + "ERROR 3021: Column " + p_lcol + " in " + p_tabl.name +  " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3020: Column " + p_lcol + " in " + p_tabl.name +  " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     
                                     # Find row
@@ -277,19 +273,19 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                         if p_tabl.value[j][lcol] == p_lval:
                                             lrow = j
                                     if lrow is None:
-                                        msg = msg + "ERROR 3022: " + p_lval + " not found in column " + p_lcol + " in " + p_tabl.name + " in record " + record.name + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3021: " + p_lval + " not found in column " + p_lcol + " in " + p_tabl.name + " in record " + record.name + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     
                                     # Get defining column ID
                                     try:
                                         col = p_tabl.columns.index(p_col)
                                     except:
-                                        msg = msg + "ERROR 3023: Column " + p_col + " in " + p_tabl.name + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3022: Column " + p_col + " in " + p_tabl.name + " in table " + table.name + " not found. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     
                                     # Check column type
                                     if p_tabl.column_types[col] != "POIN":
-                                        msg = msg + "ERROR 3024: Column " + p_col + " in " + p_tabl.name + " in table " + table.name + " is not type POIN. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3023: Column " + p_col + " in " + p_tabl.name + " in table " + table.name + " is not type POIN. Check Expression definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
 
                                     # Get the value and unit
@@ -297,7 +293,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                     unit = p_tabl.units.data[lrow][col]
 
                                     if val is None:
-                                        msg = msg + "ERROR 3025: Row " + str(lrow) + ", Column " + p_col + " in " + p_tabl.name + " in record " + record.name + " in table " + table.name + " is not defined.\n"
+                                        msg = msg + "ERROR 3024: Row " + str(lrow) + ", Column " + p_col + " in " + p_tabl.name + " in record " + record.name + " in table " + table.name + " is not defined.\n"
                                         return msg
 
                                 # Check for unit conversion
@@ -305,13 +301,13 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                     def_unit = re.findall(r'\(([^)]+)\)', p_full)
 
                                     if def_unit == []:
-                                        msg = msg + "ERROR 3026: " + params[k] + " in record " + record.name + " in table " + table.name + " needs units defined in " + attribute + " between ().\n"
+                                        msg = msg + "ERROR 3025: " + params[k] + " in record " + record.name + " in table " + table.name + " needs units defined in " + attribute + " between ().\n"
                                         return msg
                                     
                                     if def_unit[0] != unit:
                                         conv_dict = db.dimensionally_equivalent_units(unit)
                                         if def_unit[0] not in conv_dict.keys():
-                                            msg = msg + "ERROR 3027: Invalid unit conversion defined for " + params[k] + " in record " + record.name + " in table " + table.name + " in " + attribute + ". Units " + unit + " and " + def_unit[0] + " are incompatible.\n"
+                                            msg = msg + "ERROR 3026: Invalid unit conversion defined for " + params[k] + " in record " + record.name + " in table " + table.name + " in " + attribute + ". Units " + unit + " and " + def_unit[0] + " are incompatible.\n"
                                             return msg
                                         val = val*conv_dict[def_unit[0]]['factor'] + conv_dict[def_unit[0]]['offset']
 
@@ -324,11 +320,11 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                 x_param = rng.split(':')[0].strip()
                                 if x_param in func.parameters.keys():
                                     if func.parameters[x_param].type == 'Discrete':
-                                        msg = msg + "ERROR 3029: Parameter " + x_param + " in " + func.name + " in table " + table.name + " is not continuous. Check Range definition in record " + record.name + " in " + attribute + ".\n"
+                                        msg = msg + "ERROR 3028: Parameter " + x_param + " in " + func.name + " in table " + table.name + " is not continuous. Check Range definition in record " + record.name + " in " + attribute + ".\n"
                                         return msg
                                     x_param_u = func.parameters[x_param].unit
                                 else:
-                                    msg = msg + "ERROR 3028: Parameter " + x_param + " is not in " + func.name + " in table " + table.name + ". Check Range definition in record " + record.name + " in " + attribute + ".\n"
+                                    msg = msg + "ERROR 3027: Parameter " + x_param + " is not in " + func.name + " in table " + table.name + ". Check Range definition in record " + record.name + " in " + attribute + ".\n"
                                     return msg
                                 rng = rng.split(':')[1]
 
@@ -339,7 +335,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                         x_param_u = func.parameters[p].unit
                                         break
                             if x_param is None:
-                                msg = msg + "ERROR 3030: No viable parameter found for " + func.name + " in table " + table.name + ".\n"
+                                msg = msg + "ERROR 3029: No viable parameter found for " + func.name + " in table " + table.name + ".\n"
                                 return msg
 
                             # Check units
@@ -347,7 +343,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                             if rng_u != x_param_u:
                                 conv_dict = db.dimensionally_equivalent_units(x_param_u)
                                 if rng_u not in conv_dict.keys():
-                                    msg = msg + "ERROR 3031: Invalid unit conversion defined for Parameter " + x_param + " in " + func.name + " in record " + record.name + " in table " + table.name + " in " + attribute + ". Units " + x_param_u + " and " + rng_u + " are incompatible.\n"
+                                    msg = msg + "ERROR 3030: Invalid unit conversion defined for Parameter " + x_param + " in " + func.name + " in record " + record.name + " in table " + table.name + " in " + attribute + ". Units " + x_param_u + " and " + rng_u + " are incompatible.\n"
                                     return msg
                                 conv_flag = 1
                                 
@@ -357,13 +353,13 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                 try:
                                     p_array = np.linspace(float(vals[0]), float(vals[1]), int(vals[2]))
                                 except:
-                                    msg = msg + "ERROR 3032: Invalid format for 'Range' in record " + record.name + " in table " + table.name + " in " + attribute + ". See documentation for correct format options. \n"
+                                    msg = msg + "ERROR 3031: Invalid format for 'Range' in record " + record.name + " in table " + table.name + " in " + attribute + ". See documentation for correct format options. \n"
                                     return msg
                                 
                             else:
                                 p_array = np.fromstring(rng, sep=',')
                                 if len(p_array) == 0:
-                                    msg = msg + "ERROR 3032: Invalid format for 'Range' in record " + record.name + " in table " + table.name + " in " + attribute + ". See documentation for correct format options. \n"
+                                    msg = msg + "ERROR 3031: Invalid format for 'Range' in record " + record.name + " in table " + table.name + " in " + attribute + ". See documentation for correct format options. \n"
                                     return msg
                                 
                             # Convert X Values
@@ -379,14 +375,14 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                                         val_exp = val_exp.replace('^', '**')
                                     f_array[j] = eval(val_exp)
                                 except:
-                                    msg = msg + "ERROR 3033: Invalid format for Expression in " + attribute + " in record " + record.name + " in table " + table.name + ". See documentation for correct format options. \n"
+                                    msg = msg + "ERROR 3032: Invalid format for Expression in " + attribute + " in record " + record.name + " in table " + table.name + ". See documentation for correct format options. \n"
                                     return msg
                                 
                             # Check unit conversion for y
                             if func_u != func.unit:
                                 conv_dict = db.dimensionally_equivalent_units(func_u)
                                 if func.unit not in conv_dict.keys():
-                                    msg = msg + "ERROR 3034: Invalid unit conversion defined for Function Unit in " + attribute + " in record " + record.name + " in table " + table.name + ". \n"
+                                    msg = msg + "ERROR 3033: Invalid unit conversion defined for Function Unit in " + attribute + " in record " + record.name + " in table " + table.name + ". \n"
                                     return msg
                                 f_array = f_array*conv_dict[func.unit]['factor'] + conv_dict[func.unit]['offset']
                             
@@ -394,7 +390,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                             try:
                                 s_num = func.parameters['Series Number'].values[func.parameters['Series Number'].values.index(s_num)]
                             except:
-                                msg = msg + "ERROR 3035: Series Number not found in discrete options for " + func.name + " in table " + table.name + ".\n"
+                                msg = msg + "ERROR 3034: Series Number not found in discrete options for " + func.name + " in table " + table.name + ".\n"
                                 return msg
                             
                             # Write the Data
@@ -408,5 +404,5 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                         record = mi.update([record])[0]
 
                         # Add success message
-                        msg = msg + 'Succesfully updated ' + record.name + '. \n'
+                        msg = msg + 'Succesfully updated ' + attribute + " in " + record.name + '. \n'
     return msg

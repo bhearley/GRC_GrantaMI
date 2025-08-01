@@ -116,7 +116,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         msg = msg + "WARNING: Unable to get table " + table_name + " from database " + db_i.db_key + ". \n"
 
 
-    # Find all attributes with associated meta data
+    # Find all attributes with associated keyphrase
     for db in db_list:
         for table in databases[db]:
             for attribute in table.attributes:
@@ -190,7 +190,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                     srch_crit = srch_att.search_criterion(exists=True, in_column="Linking Value")
                     srch_res = table.search_for_records_where([srch_crit])
 
-                    # Update Recprds
+                    # Update Records
                     for record in srch_res:
                     
                         # Set the functional attribute
@@ -284,7 +284,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                             except:
                                 msg = msg + "ERROR 2019: Linking Attribute defined for " + attribute + " in record " + record.name + " in table " + table.name + " could not be found. Check the attribute name.\n"
                                 return msg
-                            link_types = ['DCT', 'STXT']
+                            link_types = ['DISC', 'STXT']
                             if link_att.type not in link_types:
                                 msg = msg + "ERROR 2020: Invalid Linking Attribute Type defined for " + attribute + " in record " + record.name + " in table " + table.name + ". Linking Attribute must be STXT or DCT.\n"
                                 return msg
@@ -305,7 +305,12 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                             # Perform Search
                             link_srch_crit = link_att.search_criterion(equal_to =link_val)
                             link_srch_res = link_table.search_for_records_where([link_srch_crit])
-                            link_record = link_srch_res[0]
+
+                            try:
+                                link_record = link_srch_res[0]
+                            except:
+                                msg = msg + "ERROR 2024: No linked record found for " + attribute + " in record " + record.name + " in table " + table.name + ".\n"
+                                return msg
 
                             # Organize the data
                             link_func = link_record.attributes[link_func.name]
@@ -389,5 +394,5 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                         record = mi.update([record])[0]
 
                         # Add success message
-                        msg = msg + 'Succesfully updated ' + record.name + '. \n'
+                        msg = msg + 'Succesfully updated ' + attribute + " in " + record.name + '. \n'
     return msg

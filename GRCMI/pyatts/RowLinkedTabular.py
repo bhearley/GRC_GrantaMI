@@ -670,17 +670,3 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                         msg = msg + 'Succesfully updated ' + attribute + " in " + record.name + '. \n'
 
     return msg
-
-
-# Import Functions
-from GRCMI import Connect
-
-# Connect to the database
-server_name = "https://granta.ndc.nasa.gov"
-db_key = "NasaGRC_MD_45_09-2-05"
-table_name = "Development Table #1"
-mi, db, table = Connect(server_name, db_key, table_name)
-
-# Run
-msg = RowLinkedTabular(mi, db, table)
-print(msg)

@@ -226,7 +226,7 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                 return msg
                             link_types = ['DISC', 'STXT']
                             if link_att.type not in link_types:
-                                msg = msg + "ERROR 1010: Invalid Linking Attribute Type defined for " + attribute + " in record " + record.name + " in table " + tab_rwl.name + ". Linking Attribute must be STXT or DCT.\n"
+                                msg = msg + "ERROR 1010: Invalid Linking Attribute Type defined for " + attribute + " in record " + record.name + " in table " + tab_rwl.name + ". Linking Attribute must be STXT or DISC.\n"
                                 return msg
                             
                             # Check Linked Tabular Attribute
@@ -261,7 +261,7 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                         pass
                                 
                                 if e_flag == 0:
-                                    msg = msg + "ERROR 1014: Invalid Linked Tabular Column Type defined for " + attribute + " in record " + record.name + " in table " + tab_rwl.name + ". Linking Tabular Column must be STXT or DCT.\n"
+                                    msg = msg + "ERROR 1014: Invalid Linked Tabular Column Type defined for " + attribute + " in record " + record.name + " in table " + tab_rwl.name + ". Linking Tabular Column must be STXT or DISC.\n"
                                     return msg
                             
                             # Perform Search
@@ -471,7 +471,7 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                             if val in tabl.definition.discrete_values[t_col_idx]:
                                                 new_val = val
                                             else:
-                                                msg = msg + "ERROR 1026: " + val + " in " + link_record.name + " is not in the discrete options for column " + config[col] + " in " + tabl.name + " in " + record.name + ".\n"
+                                                msg = msg + "ERROR 1026: " + val + " in record " + link_record.name + " is not in the discrete options for column " + config[col] + " in " + tabl.name + " in record " + record.name + ".\n"
                                                 return msg
                                             
                                         # Check for integer
@@ -479,7 +479,7 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                             try:
                                                 new_val = int(val)
                                             except:
-                                                msg = msg + "ERROR 1025: Incompatible column types between " + col + " in " + link_tab.name + " in " + link_record.name + " and " + config[col] + " in " + tabl.name + " in " + record.name + ".\n"
+                                                msg = msg + "ERROR 1025: Incompatible column types between " + col + " in " + link_tab.name + " in record " + link_record.name + " and " + config[col] + " in " + tabl.name + " in record " + record.name + ".\n"
                                                 return msg
                                         
                                         # Check for POINT
@@ -532,7 +532,7 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                             if s_unit == '':
                                                 new_val = int(val)
                                             else:
-                                                msg = msg + "ERROR 1027: Incompatible column types between " + col + " in " + link_tab.name + " in " + link_record.name + " and " + config[col] + " in " + tabl.name + " in " + record.name + ". POIN cannot be converted to INPT with assocaited units.\n"
+                                                msg = msg + "ERROR 1027: Incompatible column types between " + col + " in " + link_tab.name + " in " + link_record.name + " and " + config[col] + " in " + tabl.name + " in " + record.name + ". POIN cannot be converted to INPT with associated units.\n"
                                                 return msg
                                         
                                         # Convert to point
@@ -606,7 +606,7 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                             if t_unit == '':
                                                 new_val = val
                                             else:
-                                                msg = msg + "ERROR 1029: Incompatible column types between " + col + " in " + link_tab.name + " in " + link_record.name + " and " + config[col] + " in " + tabl.name + " in " + record.name + ". INPT cannot be converted to POIN with assocaited units.\n"
+                                                msg = msg + "ERROR 1029: Incompatible column types between " + col + " in " + link_tab.name + " in " + link_record.name + " and " + config[col] + " in " + tabl.name + " in " + record.name + ". INPT cannot be converted to POIN with associated units.\n"
                                                 return msg
                                             
                                         else:

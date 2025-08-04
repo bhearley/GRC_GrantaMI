@@ -322,8 +322,9 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                     # Check that there's one row of data - if not, assume no configuration
                                     if len(config_att.value) < 1:
                                         for col in tabl.columns:
-                                            if col != 'RWL' and col !='Link':
-                                                config[col] = col
+                                            if col in link_tab.columns and col in tabl.columns:
+                                                if col != 'RWL' and col !='Link':
+                                                    config[col] = col
                                         return config, msg, 0
 
                                     # Check Required Columns
@@ -376,8 +377,9 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
 
                                     if row is None:
                                         for col in tabl.columns:
-                                            if col != 'RWL' and col !='Link':
-                                                config[col] = col
+                                            if col in link_tab.columns and col in tabl.columns:
+                                                if col != 'RWL' and col !='Link':
+                                                    config[col] = col
                                         return config, msg, 0
 
                                     # Find matching attributes
@@ -410,14 +412,15 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                                 msg = msg + "ERROR 1024: Column name " + target + " defined in Configuration Meta-Attribute in " + attribute + " in table " + table.name + " not found in " + tabl.name + " in " + record.name + ".\n"
                                                 return config, msg, 1
                                             
-                                            config[source] =  target
+                                            config[target] =  source
 
                                     return config, msg, 0
 
                                 else:
                                     for col in tabl.columns:
-                                        if col != 'RWL' and col !='Link':
-                                            config[col] = col
+                                        if col in link_tab.columns and col in tabl.columns:
+                                            if col != 'RWL' and col !='Link':
+                                                config[col] = col
                                     return config, msg, 0
 
                             # Get Configuration
@@ -429,15 +432,19 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                             # Get new row data
                             for col in config.keys():
                                 # Get the column index
-                                s_col_idx = source_col_names.index(col)
+                                try:
+                                    s_col_idx = source_col_names.index(config[col])
+                                except:
+                                    continue
+                                
 
-                                if config[col] in tabl.columns:
+                                if col in tabl.columns:
                                     # Add the column name
                                     if i == 0:
-                                        tab_data_cols.append(config[col])
+                                        tab_data_cols.append(col)
 
                                     # Get the target index
-                                    t_col_idx = tabl.columns.index(config[col])
+                                    t_col_idx = tabl.columns.index(col)
     
                                     # Get the source value
                                     val = row_data[s_col_idx]
@@ -465,7 +472,8 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                         # Check string is in discrete option
                                         elif ttype == 'DISC':
                                             try:
-                                                val = val[0]
+                                                if isinstance(val, list):
+                                                    val = val[0]
                                             except:
                                                 pass
                                             if val in tabl.definition.discrete_values[t_col_idx]:
@@ -563,7 +571,19 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
                                             return msg
 
                                     elif stype == 'RNGE':
+                                        # Get Value
+                                        try:
+                                            val = val[0]
+                                        except:
+                                            pass
+
+                                        # Get the source unit
+                                        s_unit = unit_data[s_col_idx]
+                                        if isinstance(s_unit, list):
+                                            s_unit = s_unit[0]
+
                                         if ttype == "RNGE":
+                                            
                                             t_unit = tabl.units.default_units[t_col_idx]
                                             if isinstance(t_unit, list):
                                                 t_unit = t_unit[0]
@@ -657,7 +677,7 @@ def RowLinkedTabular(mi, dbs = None, tables = None):
 
 
                             for col in tab_data_cols:
-                                tabl.value[i][tab_data_cols.index(col)] = tab_data_new[tab_data_cols.index(col)]
+                                tabl.value[i][tabl.columns.index(col)] = tab_data_new[tab_data_cols.index(col)]
                                 
                             # Create the link
                             tabl.value[i][tabl.columns.index('Link')] = mpy.Hyperlink(url=link_record.viewer_url , hyperlink_display="New", hyperlink_description=link_record.name)

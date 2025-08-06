@@ -1,4 +1,4 @@
-def ParameterFunctional(mi, dbs = None, tables = None):
+def FormulaBasedFunctional(mi, dbs = None, tables = None):
     #   PURPOSE: Update all parameter based functional attributes
     #
     #   INPUTS:
@@ -112,13 +112,13 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                     else:
                         msg = msg + "WARNING: Unable to get table " + table_name + " from database " + db_i.db_key + ". \n"
 
-    # Find all attributes with Functional Parameter Definition
+    # Find all attributes with Formula-Based Definition
     for db in db_list:
         for table in databases[db]:
             for attribute in table.attributes:
 
                 # Find attributes with keyphrase
-                if "Functional Parameter Definition" in attribute:
+                if "Formula-Based Definition" in attribute:
 
                     # Check type
                     if table.attributes[attribute].type != 'TABL':
@@ -140,7 +140,7 @@ def ParameterFunctional(mi, dbs = None, tables = None):
                             return msg
                     
                     # Get corresponding functional attribute
-                    func_att = attribute.split("Functional Parameter Definition")[0].strip()
+                    func_att = attribute.split("Formula-Based Definition")[0].strip()
 
                     # Check functional attribute exists
                     if func_att not in table.attributes:

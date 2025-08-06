@@ -72,7 +72,6 @@ def ClearData():
         tabl.value[i][tabl.columns.index("Poisson's Ratio (23 axis)")] = None
         tabl.value[i][tabl.columns.index('UTS (11 axis)')] = None
         tabl.value[i][tabl.columns.index('UTS (22 axis)')] = None
-        tabl.value[i][tabl.columns.index('Weight')] = None
         tabl.value[i][tabl.columns.index('Link')] = None
     record.set_attributes([tabl])
     record = mi.update([record])[0]
@@ -107,11 +106,10 @@ if options == 1:
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     db_key = "NasaGRC_MD_45_09-2-05"
-    table_name = "Applications (Demo)"
-    mi, db, table = Connect(server_name, db_key, table_name)
+    mi, db = Connect(server_name, db_key)
 
     # Run
-    msg = RowLinkedTabular(mi, db, table)
+    msg = RowLinkedTabular(mi, db, ['Machine Learning (Demo)', 'Applications (Demo)'])
     print(msg)
 
 # Run with defined database

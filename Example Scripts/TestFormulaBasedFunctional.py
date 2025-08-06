@@ -20,14 +20,14 @@ def ClearData():
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     db_key = "NasaGRC_MD_45_09-2-05"
-    table_name = "Development Table #1"
+    table_name = "Models (Demo)"
     mi, db, table = Connect(server_name, db_key, table_name)
 
     # Get the record
-    record = table.search_for_records_by_name('Parameter Based Functional Attribute Demo')[0]
+    record = table.search_for_records_by_name('Formula-Based Demo')[0]
 
     # Clear the functional data
-    func = record.attributes['FP Demo']
+    func = record.attributes['Demo Function']
     func.clear()
     record.set_attributes([func])
     record = mi.update([record])[0]
@@ -44,16 +44,16 @@ if options == 1:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, ParameterFunctional
+    from GRCMI import Connect, FormulaBasedFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     db_key = "NasaGRC_MD_45_09-2-05"
-    table_name = "Development Table #1"
+    table_name = "Models (Demo)"
     mi, db, table = Connect(server_name, db_key, table_name)
 
     # Run
-    msg = ParameterFunctional(mi, db, table)
+    msg = FormulaBasedFunctional(mi, db, table)
     print(msg)
 
 # Run with defined database
@@ -62,7 +62,7 @@ if options == 2:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, ParameterFunctional
+    from GRCMI import Connect, FormulaBasedFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -70,7 +70,7 @@ if options == 2:
     mi, db = Connect(server_name, db_key)
 
     # Run
-    msg = ParameterFunctional(mi, db)
+    msg = FormulaBasedFunctional(mi, db)
     print(msg)
 
 if options == 3:
@@ -78,12 +78,12 @@ if options == 3:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, ParameterFunctional
+    from GRCMI import Connect, FormulaBasedFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
     mi = Connect(server_name)
 
     # Run
-    msg = ParameterFunctional(mi)
+    msg = FormulaBasedFunctional(mi)
     print(msg)

@@ -286,7 +286,7 @@ def LinkedFunctional(mi, dbs = None, tables = None):
                                 return msg
                             link_types = ['DISC', 'STXT']
                             if link_att.type not in link_types:
-                                msg = msg + "ERROR 2020: Invalid Linking Attribute Type defined for " + attribute + " in record " + record.name + " in table " + table.name + ". Linking Attribute must be STXT or DCT.\n"
+                                msg = msg + "ERROR 2020: Invalid Linking Attribute Type defined for " + attribute + " in record " + record.name + " in table " + table.name + ". Linking Attribute must be STXT or DISC.\n"
                                 return msg
                             
                             # Check Value

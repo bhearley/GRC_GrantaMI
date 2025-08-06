@@ -1,7 +1,5 @@
 def Connect(server_name, db_key = None, table_name = None):
 	#---------------------------------------------------------------------------
-	# Connect.py
-	#
 	# PURPOSE: Establish connection to a server, database, and table
 	#
 	# INPUTS:
@@ -17,27 +15,36 @@ def Connect(server_name, db_key = None, table_name = None):
 	try:
 		from GRANTA_MIScriptingToolkit import granta as mpy
 	except:
-		raise Exception("Unable to import Granta Scripting Toolkit")    
+		raise Exception("ERROR 0000: Unable to import Granta Scripting Toolkit.")    
 
 	# Connect to the server
 	try:
 		mi = mpy.connect(server_name, autologon=True)
 	except:
-		raise Exception("Unable to connect to Server: " + server_name)
+		if isinstance(server_name, str):
+			raise Exception("ERROR 0001: Unable to connect to Server: " + server_name + '.')
+		else:
+			raise Exception("ERROR 0002: Invalid value for 'server_name'.")
 
 	# Connect to the database
 	if db_key is not None:
 		try:
 			db = mi.get_db(db_key = db_key)
 		except:
-			raise Exception("Unable to load Database Key: " + db_key)
+			if isinstance(db_key, str):
+				raise Exception("ERROR 0003: Unable to load Database Key: " + db_key + '.')
+			else:
+				raise Exception("ERROR 0004: Invalid value for 'db_key'.")
 
 		if table_name is not None:
 			# Get the table
 			try:
 				table = db.get_table(table_name)
 			except:
-				raise Exception("Unable to load Table: " + table_name)
+				if isinstance(table_name, str):
+					raise Exception("ERROR 0005: Unable to load Table: " + table_name + '.')
+				else:
+					raise Exception("ERROR 0006: Invalid value for 'table_name'.")
 
 			return mi, db, table
 		else:

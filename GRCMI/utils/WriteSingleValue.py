@@ -1,4 +1,5 @@
 def WriteSingleValue(mi, record, RecData, SV, status):
+    #---------------------------------------------------------------------------
     #   PURPOSE: Write single value attribute data to a record
     #
     #   INPUTS:
@@ -12,7 +13,22 @@ def WriteSingleValue(mi, record, RecData, SV, status):
     #   OUTPUTS  
     #       record  Record with populated data
 
+    # Import Modules
     from datetime import datetime
+    try:
+        from GRANTA_MIScriptingToolkit import granta as mpy
+    except:
+        raise Exception("ERROR 0000: Unable to import Granta Scripting Toolkit.")
+    
+    # Check inputs
+    if isinstance(mi, mpy.mi.Session) == False:
+        raise Exception("ERROR 0009: Invalid input for 'mi' - input must be a Granta MI Session object.")
+    
+    if isinstance(record, mpy.mi_record_classes.Record) == False:
+        raise Exception("ERROR 0016: Invalid input for 'record' - input must be a Record.")
+    
+    if isinstance(record.type, mpy.mi_record_classes.Record) == False:
+        raise Exception("ERROR 0016: Invalid input for 'record' - input must be a Record.")
 
     # Preallocate List of Attributes to update
     AttList = []
@@ -140,3 +156,14 @@ def WriteSingleValue(mi, record, RecData, SV, status):
         record = mi.update([record])[0]
 
     return record
+
+from GRCMI import Connect, GetParent, GetRecord
+server_name = "https://granta.ndc.nasa.gov"
+db_key = "NasaGRC_MD_45_09-2-05"
+table_name = "Models"
+mi, db, table = Connect(server_name, db_key, table_name)
+
+folder, GUIDS, flag, msg = GetParent(mi, db, table, ['Demo', 'Parent 1', 'Parent 2'])
+record  = GetRecord(mi, db, table, 'New Record', folder)
+Data = {'Material Name':{'Value':'New Material'}}
+record = WriteSingleValue(mi, record, Data, list(Data.keys()), 'Replace')

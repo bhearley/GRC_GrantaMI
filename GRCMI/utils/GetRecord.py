@@ -7,8 +7,8 @@ def GetRecord(mi, db, table, name, parent, short_name = None):
     #       db          Selected Granta Database
     #       table       Selected Granta Table
     #       name        Name of the new record
-    #       short_name  Short name of the new record
     #       parent      Parent record
+    #       short_name  Short name of the new record
     #
     #   OUTPUTS  
     #       record  Record to write data to

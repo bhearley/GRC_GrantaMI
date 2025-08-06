@@ -1,6 +1,6 @@
 def GetParent(mi, db, table, tree):
     #---------------------------------------------------------------------------
-    #   PURPOSE: GetParent.py returns the GUID for every folder/generic record and the 
+    #   PURPOSE: Returns the GUID for every folder/generic record and the 
     #            final parent record for a desired tree path
     #   INPUTS:
     #       mi      Granta Server Connection

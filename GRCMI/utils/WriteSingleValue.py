@@ -1,4 +1,4 @@
-def WriteSingleValue(mi, record, RecData, SV, status):
+def WriteSingleValue(mi, db, record, RecData, SV, status):
     #---------------------------------------------------------------------------
     #   PURPOSE: Write single value attribute data to a record
     #
@@ -27,126 +27,238 @@ def WriteSingleValue(mi, record, RecData, SV, status):
     if isinstance(record, mpy.mi_record_classes.Record) == False:
         raise Exception("ERROR 0016: Invalid input for 'record' - input must be a Record.")
     
-    if isinstance(record.type, mpy.mi_record_classes.Record) == False:
+    if record.type != mpy.RecordType.Record:
         raise Exception("ERROR 0016: Invalid input for 'record' - input must be a Record.")
+    
+    if isinstance(RecData, dict) == False:
+        raise Exception("ERROR 0017: Invalid input for 'RecData' - input must be a dict.")
+    
+    if isinstance(SV, list) == False:
+        raise Exception("ERROR 0018: Invalid input for 'SV' - input must be a list of strings.")
+    for S in SV:
+        if isinstance(S, str) == False:
+            raise Exception("ERROR 0018: Invalid input for 'SV' - input must be a list of string values.")
+    if isinstance(status, str) == False:
+        raise Exception("ERROR 0019: Invalid input for 'status' - input must be a string equal to 'Replace', 'Append', or 'Do Not Replace'.")
+    if status not in ['Replace', 'Append',  'Do Not Replace']:
+        raise Exception("ERROR 0019: Invalid input for 'status' - input must be a string equal to 'Replace', 'Append', or 'Do Not Replace'.")
+    
+
+    # Data Validation Function
+    def data_validation(val, dtype):
+        # Short Text
+        if dtype == 'STXT':
+            if isinstance(val, str) == False:
+                try:
+                    val = str(val)
+                except:
+                    raise Exception("ERROR 0023: Invalid value in data dictionary for " + att + ". Unable to convert to string for STXT.")
+            if len(val) > 255:
+                raise Exception("ERROR 0024: Invalid value in data dictionary for " + att + ". Too many characters for STXT (Max 255).")
+            return val
+
+        # Long Text
+        if dtype == 'LTXT':
+            if isinstance(val, str) == False:
+                try:
+                    val = str(val)
+                except:
+                    raise Exception("ERROR 0025: Invalid value in data dictionary for " + att + ". Unable to convert to string for LTXT.")
+            if len(val) > 1e6:
+                raise Exception("ERROR 0026: Invalid value in data dictionary for " + att + ". Too many characters for LTXT (Max 1,000,000).")
+            return val
+
+        # Discrete
+        if dtype == 'DISC':
+            if val not in record.attributes[att].possible_discrete_values:
+                raise Exception("ERROR 0027: Invalid value in data dictionary for " + att + ". Value is not in the available discrete options.")
+            return val
+
+        # Point
+        if dtype == 'POIN':
+            if isinstance(val, float) == False:
+                try:
+                    val = float(val)
+                except:
+                    raise Exception("ERROR 0028: Invalid value in data dictionary for " + att + ". " + "Unable to convert value to point.")
+                
+            # Get Default Unit
+            unit = record.attributes[att].unit
+            if unit != '':
+                # Get data dictionary unit
+                try:
+                    data_unit = RecData[att]['Units']
+                except:
+                    raise Exception("ERROR 0029: 'Units' field not available in data dicitonary for " + att + ".")
+                if isinstance(data_unit, str) == False:
+                    raise Exception("ERROR 0030: Invalid units in data dictionary for " + att + ". " + "Units value must be a string.")
+                
+                if unit == data_unit:
+                    return val
+
+                else:
+                    conv_dict = db.dimensionally_equivalent_units(data_unit)
+                    if unit not in conv_dict.keys():
+                        raise Exception("ERROR 0031: Unable to convert " + data_unit + " in data dictionary to " + unit + " in Granta MI for " + att + ".")
+                    val = val*conv_dict[unit]['factor'] + conv_dict[unit]['offset']
+                    return val
+
+            else:
+                return val
+
+        # Range
+        if dtype == 'RNGE':
+            if isinstance(val, list) == False:
+                try:
+                    val = float(val)
+                except:
+                    raise Exception("ERROR 0032: Invalid value in data dictionary for " + att + ". " + "Value must be a list containing two point values.")
+            if len(val) != 2:
+                raise Exception("ERROR 0032: Invalid value in data dictionary for " + att + ". " + "Value must be a list containing two point values.")
+            for v in val:
+                try:
+                    float(v)
+                except:
+                    raise Exception("ERROR 0032: Invalid value in data dictionary for " + att + ". " + "Value must be a list containing two point values.")
+                
+            # Get Default Unit
+            unit = record.attributes[att].unit
+            if unit != '':
+                # Get data dictionary unit
+                try:
+                    data_unit = RecData[att]['Units']
+                except:
+                    raise Exception("ERROR 0029: 'Units' field not available in data dicitonary for " + att + ".")
+                if isinstance(data_unit, str) == False:
+                    raise Exception("ERROR 0030: Invalid units in data dictionary for " + att + ". " + "Units value must be a string.")
+                
+                if unit == data_unit:
+                    val = {'low':min(val), 'high':max(val)}
+                    return val
+
+                else:
+                    conv_dict = db.dimensionally_equivalent_units(data_unit)
+                    if unit not in conv_dict.keys():
+                        raise Exception("ERROR 0031: Unable to convert " + data_unit + " in data dictionary to " + unit + " in Granta MI for " + att + ".")
+                    val[0] = val[0]*conv_dict[unit]['factor'] + conv_dict[unit]['offset']
+                    val[1] = val[1]*conv_dict[unit]['factor'] + conv_dict[unit]['offset']
+                    val = {'low':min(val), 'high':max(val)}
+                    return val
+
+            else:
+                val = {'low':min(val), 'high':max(val)}
+                return val
+
+        # Integer
+        if dtype == 'INPT':
+            if isinstance(val, int) == False:
+                try:
+                    val = int(val)
+                except:
+                    raise Exception("ERROR 0033: Invalid value in data dictionary for " + att + ". " + "Unable to convert value to integer.")
+                
+            return val
+
+        # Logic
+        if record.attributes[att].type == 'LOGI':
+            if val not in ['Yes', 'No', True, False]:
+                raise Exception("ERROR 0034: Invalid value in data dictionary for " + att + ". " + "Logical value must be 'Yes', 'No', True, or False.")
+            if val == 'Yes':
+                val = True
+            elif val == 'No':
+                val = False
+            return val
+
+        # Date
+        if record.attributes[att].type == 'DTTM':
+            try:
+                val = datetime.strptime(val, "%m/%d/%Y")
+                return val
+            except:
+                raise Exception("ERROR 0035: Invalid value in data dictionary for " + att + ". " + "Unable to convert value to date.")
+            
+        # File
+        if record.attributes[att].type == 'FILE':
+            if isinstance(val, mpy.mi_attribute_value_classes.File) == False:
+                raise Exception("ERROR 0036: Invalid value in data dictionary for " + att + ". " + "Use GetFileObject to get a Granta MI File Object.")
+            return val
+        
+        # Image
+        if record.attributes[att].type == 'PICT':
+            if isinstance(val, mpy.mi_attribute_value_classes.File) == False:
+                raise Exception("ERROR 0036: Invalid value in data dictionary for " + att + ". " + "Use GetFileObject to get a Granta MI File Object.")
+            if val.value.file_name.split('.')[-1] not in ['png', 'jpg', 'bmp', 'tif']:
+                raise Exception("ERROR 0037: Invalid value in data dictionary for " + att + ". " + "Granta MI File Object must be an image for a PICT attribute.")
+            
+            return val
+        
+        # Hyperlink
+        if record.attributes[att].type == 'HLNK':
+            if isinstance(val, mpy.mi_attribute_value_classes.Hyperlink) == False:
+                raise Exception("ERROR 0036: Invalid value in data dictionary for " + att + ". " + "Use GetHyperLink to get a Granta MI Hyperlink Object.")
+            return val
+
 
     # Preallocate List of Attributes to update
     AttList = []
 
     # Loop through all single value attibutes
     for att in SV:
-        try:
-            if RecData[att]['Value'] != None:
+        if att not in record.attributes:
+            raise Exception("ERROR 0020: Attribute " + att + " not found in " + record.name + ". Check data dicitonary.")
+        
+        if isinstance(RecData[att], dict) == False:
+            Exception("ERROR 0021: Invalid data dictionary format. Field " + att + " in data dicitonary is not a dictionary. ")
 
-                # Check for existing value
-                if record.attributes[att].value is not None and status == "Do Not Replace":
-                    continue
-                
-                # Check for Logic
-                if record.attributes[att].type == 'LOGI':
-                    if RecData[att]['Value'] == 'Yes':
-                        RecData[att]['Value'] = True
-                    else:
-                        RecData[att]['Value'] = False
+        if "Value" not in RecData[att].keys():
+            Exception("ERROR 0022: Invalid data dictionary format. 'Value' not found in " + att + " in data dicitonary.")
 
-                # Check for Date
-                if record.attributes[att].type == 'DTTM':
-                    RecData[att]['Value'] = datetime.strptime(RecData[att]['Value'], "%m/%d/%Y")
+        # Perform Data Validation
+        if RecData[att]['Value'] != None:
+            # Check for existing value
+            if record.attributes[att].value is not None and status == "Do Not Replace":
+                continue
 
-                # Write Value
-                record.attributes[att].value = RecData[att]['Value']
+            # Get Value
+            val = RecData[att]['Value']
 
-                # Write Units
-                if RecData[att]['Units'] != None:
-                    record.attributes[att].unit = RecData[att]['Units']
-                
-                # Write Metadata
-                if len(list(RecData[att]['Metadata'].keys())) != 0:
-                    meta_atts = list(RecData[att]['Metadata'].keys())
+            # Get data validation
+            val = data_validation(val, record.attributes[att].type)
 
-                    # Loop through all meta attributes for the attribute
-                    for meta_att in meta_atts:
-                        if RecData[att]['Metadata'][meta_att]['Value'] != None:
-                            # Write Metadata Value
-                            record.attributes[att].meta_attributes[meta_att].value = RecData[att]['Metadata'][meta_att]['Value']
+            # Write value to record
+            if record.attributes[att].type in ['FILE', 'PICT']:
+                record.attributes[att].object = val
+            else:    
+                record.attributes[att].value = val
 
-                            # Write Units
-                            if RecData[att]['Metadata'][meta_att]['Units'] != None:
-                                record.attributes[att].meta_attributes[meta_att].unit = RecData[att]['Metadata'][meta_att]['Value']
-
-                            # Add meta attribute to list of attributes to update
-                            AttList.append(record.attributes[att].meta_attributes[meta_att])
-
-                # Add attribute to list of attributes to update
-                AttList.append(record.attributes[att])
-
-            # Check for range values
-            # -- Range attributes will not have "Value" populated, but will have a 'Maximum' and/or 'Minimum' meta attribute(s) populated
-            if record.attributes[att].type == 'RNGE':
-                # Get list of meta attributes
+            # Check meta-attributes
+            if 'Metadata' in RecData[att].keys():
                 meta_atts = list(RecData[att]['Metadata'].keys())
-
-                # Preallocate min/max values and units
-                min_val = None
-                min_units = None
-                min_name = None
-                max_val = None
-                max_units = None
-                max_name = None
-
-                # Loop through all meta attributes
                 for meta_att in meta_atts:
+                    if meta_att not in record.attributes[att].meta_attributes:
+                        raise Exception("ERROR 0036: Meta-Attribute " + meta_att + " not found in " + att + " in " + record.name + ". Check data dicitonary.")
 
-                    # Check for minimum value
-                    if "Minimum" in meta_att:
-                        min_val = RecData[att]['Metadata'][meta_att]['Value']
-                        if RecData[att]['Metadata'][meta_att]['Units'] != None:
-                            min_units = RecData[att]['Metadata'][meta_att]['Units']
-                        min_name = meta_att
+                    if isinstance(RecData[att]['Metadata'][meta_att], dict) == False:
+                        Exception("ERROR 0037: Invalid data dictionary format. Field " + meta_att + " in " + att+ " in data dicitonary is not a dictionary. ")
 
-                    # Check for maximum Value
-                    if "Maximum" in meta_att:
-                        max_val = RecData[att]['Metadata'][meta_att]['Value']
-                        if RecData[att]['Metadata'][meta_att]['Units'] != None:
-                            max_units = RecData[att]['Metadata'][meta_att]['Units']
-                        max_name = meta_att
+                    if "Value" not in RecData[att]['Metadata'][meta_att].keys():
+                        Exception("ERROR 0038: Invalid data dictionary format. 'Value' not found in " + meta_att + " in " + att + " in data dicitonary.")
 
-                # Check if either a max or min exists
-                if min_val != None and max_val != None:
+                    # Get Value
+                    val = RecData[att]['Metadata'][meta_att]['Value']
 
-                    # Set Range Units
-                    if min_name != None:
-                        meta_atts.remove(min_name)
-                        units = min_units
-                    if max_name != None:
-                        meta_atts.remove(max_name)
-                        units = max_units
+                    # Get data validation
+                    val = data_validation(val, record.attributes[att].meta_attributes[meta_att].type)
 
-                    # Write Range Value
-                    record.attributes[att].value =  (min_val, max_val)
-                    if units != None:
-                        record.attributes[att].unit = units
+                    # Write value to record
+                    if record.attributes[att].meta_attributes[meta_att].type in ['FILE', 'PICT']:
+                        record.attributes[att].meta_attributes[meta_att].object = val
+                    else:    
+                        record.attributes[att].meta_attributes[meta_att].value = val
 
-                    # Add attribute to list of attributes to update
-                    AttList.append(record.attributes[att])
-
-                    # Loop through all meta attributes for the attribute
-                    for meta_att in meta_atts:
-                        if RecData[att]['Metadata'][meta_att]['Value'] != None:
-
-                            # Write Metadata Value
-                            record.attributes[att].meta_attributes[meta_att].value = RecData[att]['Metadata'][meta_att]['Value']
-
-                            # Write Units
-                            if RecData[att]['Metadata'][meta_att]['Units'] != None:
-                                record.attributes[att].meta_attributes[meta_att].unit = RecData[att]['Metadata'][meta_att]['Units']
-
-                            # Add meta attribute to list of attributes to update
-                            AttList.append(record.attributes[att].meta_attributes[meta_att])
-
-        except:
-            pass
-
+            # Add attribute to update list
+            AttList.append(record.attributes[att])
+       
     # Write Data
     if len(AttList) > 0:
         # Set the Attributes
@@ -156,14 +268,3 @@ def WriteSingleValue(mi, record, RecData, SV, status):
         record = mi.update([record])[0]
 
     return record
-
-# from GRCMI import Connect, GetParent, GetRecord
-# server_name = "https://granta.ndc.nasa.gov"
-# db_key = "NasaGRC_MD_45_09-2-05"
-# table_name = "Models"
-# mi, db, table = Connect(server_name, db_key, table_name)
-
-# folder, GUIDS, flag, msg = GetParent(mi, db, table, ['Demo', 'Parent 1', 'Parent 2'])
-# record  = GetRecord(mi, db, table, 'New Record', folder)
-# Data = {'Material Name':{'Value':'New Material'}}
-# record = WriteSingleValue(mi, record, Data, list(Data.keys()), 'Replace')

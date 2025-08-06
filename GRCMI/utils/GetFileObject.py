@@ -1,11 +1,12 @@
-def GetFileObject(file):
+def GetFileObject(file, desc = None):
     #---------------------------------------------------------------------------
     #   PURPOSE: Get a file object importable to Granta MI.
     #
     #   INPUTS:
     #       file            filepath
+    #       desc            description of the file
     #   OUTPUTS  
-    #       file_object     Record with populated data
+    #       file_object     File object importable to a FILE or PICT attribute
     #---------------------------------------------------------------------------
 
     # Import Modules
@@ -30,5 +31,9 @@ def GetFileObject(file):
 
     # Set the file name
     file_object.file_name = os.path.basename(file)
+    if desc is not None:
+        if isinstance(desc, str) == False:
+            raise Exception("ERROR 0008: Invalid value for 'desc'.")
+        file_object.description = desc
 
     return file_object

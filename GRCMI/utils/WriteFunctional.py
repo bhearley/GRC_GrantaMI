@@ -58,3 +58,15 @@ def WriteFunctional(mi, record, RecData, FN, status):
         record = mi.update([record])[0]
 
     return record
+
+# from GRCMI import Connect, GetParent, GetRecord, GetFileObject
+# server_name = "https://granta.ndc.nasa.gov"
+# db_key = "NasaGRC_MD_45_09-2-05"
+# table_name = "Models"
+# mi, db, table = Connect(server_name, db_key, table_name)
+
+# folder, GUIDS, flag, msg = GetParent(mi, db, table, ['Demo', 'Parent 1', 'Parent 2'])
+# record  = GetRecord(mi, db, table, 'New Record', folder)
+# file = GetFileObject(r"C:\Users\bhearley\Downloads\generic_cure_cycle.png")
+# Data = {'Ex. Img':{'Value':file}}
+# record = WriteSingleValue(mi, db, record, Data, list(Data.keys()), 'Replace')

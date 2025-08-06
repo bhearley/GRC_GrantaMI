@@ -157,13 +157,13 @@ def WriteSingleValue(mi, record, RecData, SV, status):
 
     return record
 
-from GRCMI import Connect, GetParent, GetRecord
-server_name = "https://granta.ndc.nasa.gov"
-db_key = "NasaGRC_MD_45_09-2-05"
-table_name = "Models"
-mi, db, table = Connect(server_name, db_key, table_name)
+# from GRCMI import Connect, GetParent, GetRecord
+# server_name = "https://granta.ndc.nasa.gov"
+# db_key = "NasaGRC_MD_45_09-2-05"
+# table_name = "Models"
+# mi, db, table = Connect(server_name, db_key, table_name)
 
-folder, GUIDS, flag, msg = GetParent(mi, db, table, ['Demo', 'Parent 1', 'Parent 2'])
-record  = GetRecord(mi, db, table, 'New Record', folder)
-Data = {'Material Name':{'Value':'New Material'}}
-record = WriteSingleValue(mi, record, Data, list(Data.keys()), 'Replace')
+# folder, GUIDS, flag, msg = GetParent(mi, db, table, ['Demo', 'Parent 1', 'Parent 2'])
+# record  = GetRecord(mi, db, table, 'New Record', folder)
+# Data = {'Material Name':{'Value':'New Material'}}
+# record = WriteSingleValue(mi, record, Data, list(Data.keys()), 'Replace')

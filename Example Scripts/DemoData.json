@@ -1,0 +1,92 @@
+{
+"Test Point with Units":{
+            "Value": 1000,
+            "Units": "Pa"
+            },
+"Test Range with Units":{
+            "Value": [800, null],
+            "Units": "Pa"
+            },
+"Test Integer":{
+            "Value": 5
+            },
+"Test Short Text":{
+            "Value": "Material"
+            },
+"Test Long Text":{
+            "Value": "Description of the material"
+            },
+"Test Discrete":{
+            "Value": "Option 1"
+            },
+"Test Picture":{
+            "Value": "NASA_logo.png"
+            },
+"Test File":{
+            "Value": "NASA_Schema.pdf"
+            },
+"Test Hyperlink":{
+            "Value": "https://www.nasa.gov/"
+            },
+"Test Logical":{
+            "Value": true
+            },
+"Test Date":{
+            "Value": "08/07/2025"
+            },
+"Test Float Functional":{
+            "X":{
+                "Value":[0, 100, 200, 300, 400, 500],
+                "Units":"s"
+                },
+            "Y":{
+            "Value":[1e3, 3e3, 4e3, 4.5e3, 4.75e3, 4.8e3],
+            "Units":"Pa"
+                }
+            },
+"Test Float Functional with Range":{
+            "X":{
+                "Value":[0, 100, 200, 300, 400, 500, 0, 100, 200, 300, 400, 500],
+                "Units":"s"
+                },
+            "Series Number":{
+                "Value":[1,1,1,1,1,1,2,2,2,2,2,2]
+                },
+            "Y":{
+            "Value":[1e3, 3e3, 4e3, 4.5e3, 4.75e3, 4.8e3, [0.7e3, 1.3e3], [2.8e3, 3.2e3], [3.8e3, 4.2e3], [4.4e3, 4.6e3], [4.7e3, 4.8e3], [4.775e3, 4.825e3]],
+            "Units":"Pa"
+                }
+            },
+"Test Tabular":{
+    "Columns":["Test Tab Point",	"Test Tab Range",	"Test Tab Integer",	"Test Tab Short Text",	"Test Tab Long Text",	"Test Tab Discrete",	"Test Tab Picture",	"Test Tab File",	"Test Tab Hyperlink",	"Test Tab Logical",	"Test Tab Date"],
+    "Value":[[50, [25, 75], 10, "Row 1", "Values in Row 1", "Option 1", "NASA_logo.png", "NASA_Schema.pdf", "https://www.nasa.gov/", "Yes", "8/7/2025"],[150, [125, 175], 20, "Row 2", "Values in Row 2", "Option 2", null, null, null, "No", "8/8/2025"]],
+    "Units":["°C", "°C", null, null, null, null, null, null, null, null, null]
+    },
+"Test Linked Tabular":{
+    "Columns":["Test Local Data",	"Linking Value"],
+    "Value":[["Local Data", "Material"]]
+    },
+"Test Metadata":{
+    "Value":"Meta Test",
+    "Metadata":{
+        "Test Meta Point":{
+            "Value": 5,
+            "Units":"°C"
+            },
+        "Test Meta Float Functional":{
+            "X":{
+                "Value":[0, 100, 200, 300, 400, 500],
+                "Units":"°C"
+                },
+            "Y":{
+            "Value":[1e2, 3e2, 4e2, 4.5e2, 4.75e2, 4.8e2],
+            "Units":"Pa"
+                }
+            },
+        "Test Meta Tabular":{
+            "Columns":["Test Meta Tab Short Text",	"Test Meta Tab Discrete"],
+            "Value":[["Meta Row 1", "Option 3"]]
+            }
+        }
+    }
+}

@@ -1,44 +1,45 @@
 def GetRecord(mi, db, table, name, parent, short_name = None):
     #---------------------------------------------------------------------------
-    #   PURPOSE: Get the new record by either creating one if it doesn't exist or fetching one 
-    #            that does exist
-    #   INPUTS:
-    #       mi          Granta Server Connection
-    #       db          Selected Granta Database
-    #       table       Selected Granta Table
-    #       name        Name of the new record
-    #       parent      Parent record
-    #       short_name  Short name of the new record
+    #   PURPOSE: Get the new record by either creating one if it doesn't exist 
+    #           or fetching one that does exist
     #
+    #   INPUTS:
+    #       mi          SessionObject       Granta Server Connection
+    #       db          DatabaseObject      Selected Granta Database
+    #       table       TableObject         Selected Granta Table
+    #       name        string              Name of the new record
+    #       parent      RecordObject        Parent record
+    #       short_name  string              Short name of the new record 
+    #                                       (optional)
     #   OUTPUTS  
-    #       record  Record to write data to
+    #       record      RecordObject        Record to write data to
     #---------------------------------------------------------------------------
 
     # Import Modules
     try:
         from GRANTA_MIScriptingToolkit import granta as mpy
     except:
-        raise Exception("ERROR 0000: Unable to import Granta Scripting Toolkit.")
+        raise Exception("Unable to import Granta Scripting Toolkit.")
     
     # Check inputs
     if isinstance(mi, mpy.mi.Session) == False:
-        raise Exception("ERROR 0009: Invalid input for 'mi' - input must be a Granta MI Session object.")
+        raise Exception("Invalid input for 'mi'. 'mi' must be a Granta MI Session object.")
     
     if isinstance(db, mpy.mi_tree_classes.Database) == False:
-        raise Exception("ERROR 0010: Invalid input for 'db' - input must be a Granta MI Database object.")
+        raise Exception("Invalid input for 'db'. 'db' must be a Granta MI Database object.")
     
     if isinstance(table, mpy.mi_tree_classes.Table) == False:
-        raise Exception("ERROR 0011: Invalid input for 'table' - input must be a Granta MI Table object.")
+        raise Exception("Invalid input for 'table'. 'table must be a Granta MI Table object.")
     
     if isinstance(name, str) == False:
-        raise Exception("ERROR 0013: Invalid input for 'name' - input must be a string.")
+        raise Exception("Invalid input for 'name', 'name' must be a string.")
     
     if isinstance(parent, mpy.mi_record_classes.Record) == False:
-        raise Exception("ERROR 0014: Invalid input for 'parent' - input must be a Granta MI Folder, Record, or Generic Record object.")
+        raise Exception("Invalid input for 'parent', 'parent' must be a Granta MI Folder, Record, or Generic Record object.")
     if short_name is None:
         short_name = name
     if isinstance(short_name, str) == False:
-        raise Exception("ERROR 0015: Invalid input for 'short_name' - input must be a string.")
+        raise Exception("Invalid input for 'short_name'. 'short_name' must be a string.")
     
     # Search for the record
     rec_list = table.search_for_records_by_name(name)

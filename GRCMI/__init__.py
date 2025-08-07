@@ -7,10 +7,7 @@ from .utils import GetFileObject
 from .utils import GetHyperLink
 from .utils import GetParent
 from .utils import GetRecord
-from .utils import WriteFunctional
-from .utils import WriteSingleValue
+from .utils import WriteRecordData
 from .utils import WriteStaticLinks
-from .utils import WriteTabular
-from .units import UnitConversion
 
-__all__ = ['LinkedFunctional', 'FormulaBasedFunctional', 'RowLinkedTabular', 'Connect','GetFileObject', 'GetHyperLink', 'GetParent', 'GetRecord', 'WriteFunctional', 'WriteSingleValue','WriteStaticLinks', 'WriteTabular', 'UnitConversion']
+__all__ = ['LinkedFunctional', 'FormulaBasedFunctional', 'RowLinkedTabular', 'Connect','GetFileObject', 'GetHyperLink', 'GetParent', 'GetRecord', 'WriteRecordData', 'WriteStaticLinks']

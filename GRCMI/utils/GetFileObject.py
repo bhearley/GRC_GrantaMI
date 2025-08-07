@@ -3,10 +3,12 @@ def GetFileObject(file, desc = None):
     #   PURPOSE: Get a file object importable to Granta MI.
     #
     #   INPUTS:
-    #       file            filepath
-    #       desc            description of the file
+    #       file            string          file path of file to upload
+    #       desc            string          description of the file (optional)
+    #
     #   OUTPUTS  
-    #       file_object     File object importable to a FILE or PICT attribute
+    #       file_object     FileObject      File object importable to a FILE or 
+    #                                       PICT attribute
     #---------------------------------------------------------------------------
 
     # Import Modules
@@ -14,7 +16,7 @@ def GetFileObject(file, desc = None):
     try:
         from GRANTA_MIScriptingToolkit import granta as mpy
     except:
-        raise Exception("ERROR 0000: Unable to import Granta Scripting Toolkit.")
+        raise Exception("Unable to import Granta Scripting Toolkit.")
 
     # Create the file object
     file_object  = mpy.File()
@@ -25,15 +27,15 @@ def GetFileObject(file, desc = None):
             file_object.binary_data = file_buffer.read()
     except:
         if isinstance(file, str):
-            raise Exception("ERROR 0007: Unable to read " + file + " as binary.")
+            raise Exception("Unable to read " + file + " as binary.")
         else:
-            raise Exception("ERROR 0008: Invalid value for 'file'.")
+            raise Exception("Invalid value for 'file'. 'file' must be a string.")
 
     # Set the file name
     file_object.file_name = os.path.basename(file)
     if desc is not None:
         if isinstance(desc, str) == False:
-            raise Exception("ERROR 0008: Invalid value for 'desc'.")
+            raise Exception("Invalid value for 'desc'. 'desc' must be a string.")
         file_object.description = desc
 
     return file_object

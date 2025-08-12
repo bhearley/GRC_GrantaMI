@@ -1,6 +1,6 @@
 def WriteRecordData(mi, db, record, RecData, attributes = None, status = None):
     #---------------------------------------------------------------------------
-    #   PURPOSE: Write single value attribute data to a record
+    #   PURPOSE: Write all attribute data to a record
     #
     #   INPUTS:
     #   INPUTS:

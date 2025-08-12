@@ -1,4 +1,4 @@
-def GetRecord(mi, db, table, name, parent, short_name = None):
+def GetRecord(mi, db, table, name, parent = None, short_name = None):
     #---------------------------------------------------------------------------
     #   PURPOSE: Get the new record by either creating one if it doesn't exist 
     #           or fetching one that does exist
@@ -34,8 +34,11 @@ def GetRecord(mi, db, table, name, parent, short_name = None):
     if isinstance(name, str) == False:
         raise Exception("Invalid input for 'name', 'name' must be a string.")
     
-    if isinstance(parent, mpy.mi_record_classes.Record) == False:
-        raise Exception("Invalid input for 'parent', 'parent' must be a Granta MI Folder, Record, or Generic Record object.")
+    if parent is None:
+        parent = table
+    else:
+        if isinstance(parent, mpy.mi_record_classes.Record) == False and isinstance(parent, mpy.mi_tree_classes.Table) == False:
+            raise Exception("Invalid input for 'parent', 'parent' must be a Granta MI Table,Folder, Record, or Generic Record object.")
     if short_name is None:
         short_name = name
     if isinstance(short_name, str) == False:
@@ -49,15 +52,19 @@ def GetRecord(mi, db, table, name, parent, short_name = None):
 
     # Search through found records
     for rec in rec_list:
+        if isinstance(parent, mpy.mi_record_classes.Record) == True:
             if rec.parent.record_guid == parent.record_guid:
                 guid = rec.record_guid
+        else:
+            guid = rec.record_guid
 
     if guid is None:
         # Create a new record if it doesn't exist 
         new_record = table.create_record(name= name, parent = parent)
         recs = mi.update([new_record])
         guid = recs[0].record_guid
-        parent = mi.update([parent])[0]
+        if isinstance(parent, mpy.mi_record_classes.Record) == True:
+            parent = mi.update([parent])[0]
 
     # Get record from GUID
     record = db.get_record_by_id(vguid=guid)

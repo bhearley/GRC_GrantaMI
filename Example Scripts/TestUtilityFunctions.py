@@ -13,13 +13,6 @@ db_key = "NasaGRC_MD_45_09-2-05"
 table_name = "GRCMI Demo"
 mi, db, table = Connect(server_name, db_key, table_name)
 
-# Delete the demo record if it exists
-try:
-    records = table.search_for_records_by_name('New Record')
-    mi.bulk_delete_or_withdraw_records(records)
-except:
-    pass
-
 # Load the Demo Data
 with open(os.path.join(os.getcwd(), 'Example Scripts', 'DemoData.json'),'r', encoding='utf-8') as f:
     RecData = json.load(f)
@@ -47,6 +40,9 @@ record = GetRecord(mi, db, table, 'New Record', parent)
 
 # Write Record Data
 record = WriteRecordData(mi, db, record, RecData, list(RecData.keys()), 'Replace')
+
+# Create Linked record
+link_record = GetRecord(mi, db, table, 'Linked Record', table)
 
 # Write Record Links
 record = WriteStaticLinks(mi, db, table, record, LinkData, list(LinkData.keys()))

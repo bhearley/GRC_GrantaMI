@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='GRCMI',           
+    name='powermi',           
     version='0.1.0',               
     description='Short description of your package',
     author='Brandon Hearley',

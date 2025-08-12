@@ -15,7 +15,7 @@ options = 1
 # Functions
 def ClearData():
     # Import Functions
-    from GRCMI import Connect
+    from powermi import Connect
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -44,7 +44,7 @@ if options == 1:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, FormulaBasedFunctional
+    from powermi import Connect, FormulaBasedFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -62,7 +62,7 @@ if options == 2:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, FormulaBasedFunctional
+    from powermi import Connect, FormulaBasedFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -78,7 +78,7 @@ if options == 3:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, FormulaBasedFunctional
+    from powermi import Connect, FormulaBasedFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"

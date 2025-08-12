@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------------
 
 # Import Functions
-from GRCMI import Connect, LinkedFunctional
+from powermi import Connect, LinkedFunctional
 
 # Set Options
 #   0   Clear Only
@@ -63,7 +63,7 @@ if options == 1:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, LinkedFunctional
+    from powermi import Connect, LinkedFunctional
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"

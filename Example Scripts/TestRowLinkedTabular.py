@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------------
 
 # Import Functions
-from GRCMI import Connect
+from powermi import Connect
 
 # Set Options
 #   0   Clear Only
@@ -101,7 +101,7 @@ if options == 1:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, RowLinkedTabular
+    from powermi import Connect, RowLinkedTabular
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -118,7 +118,7 @@ if options == 2:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, RowLinkedTabular
+    from powermi import Connect, RowLinkedTabular
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -134,7 +134,7 @@ if options == 3:
     ClearData()
 
     # Import Functions
-    from GRCMI import Connect, RowLinkedTabular
+    from powermi import Connect, RowLinkedTabular
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"

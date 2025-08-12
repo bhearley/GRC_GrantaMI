@@ -4,7 +4,7 @@
 
 try:
     # Import Function
-    from GRCMI import Connect
+    from powermi import Connect
 
     # Connect to the database
     server_name = "https://granta.ndc.nasa.gov"
@@ -22,7 +22,7 @@ except:
 
 try:
     # Import Function
-    from GRCMI import UnitConversion
+    from powermi import UnitConversion
 
     # Perform Unit Conversion
     source_unit = 'Pa'
